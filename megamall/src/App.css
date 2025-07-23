@@ -1,0 +1,336 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Existing styles from your App.css */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* --- REFINED CSS FOR HEADER LAYOUT (LOGO FAR LEFT, CART FAR RIGHT) --- */
+
+.header-area {
+  background-color: #fff;
+  padding: 15px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 1000;
+}
+
+/* This is the new main flex container */
+.header-content-wrapper { /* Renamed from .row to avoid conflicts if .row has other rules */
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex; /* Make it a flex container */
+  align-items: center; /* Vertically align its children */
+  justify-content: space-between; /* Push logo left, everything else right */
+  flex-wrap: nowrap; /* Prevent wrapping on desktop */
+}
+
+.header-logo img { /* Target the logo image inside its new wrapper */
+  height: 89px; /* Adjust logo size */
+  flex-shrink: 0; /* Prevent logo from shrinking */
+}
+
+/* Main navigation, search, and mobile trigger wrapper */
+.main-nav-wrapper { /* Renamed from .main-nav */
+  display: flex;
+  align-items: center; /* Vertically align nav links, search, cart, and mobile trigger */
+  flex-grow: 1; /* Allow it to take all remaining space */
+  justify-content: flex-end; /* Push its content to the right */
+  margin-left: 30px; /* Space between logo and nav/search/cart group */
+}
+
+/* Navigation links (Home, Megamall, etc.) */
+.nav-links { /* Renamed from .nav */
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  /* flex-grow: 1; /* No flex-grow here anymore, handled by main-nav-wrapper */
+  /* justify-content: flex-start; /* Or remove, depends on how you want links spaced */
+}
+
+.nav-links li {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 10px 15px; /* Spacing between nav links */
+  display: block;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a.active,
+.nav-links li a:hover {
+  color: #007bff;
+}
+
+/* Submenu styling */
+.nav-links .submenu ul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  min-width: 200px;
+  display: none;
+  z-index: 900;
+  text-align: left;
+}
+
+.nav-links .submenu:hover ul {
+  display: block;
+}
+
+.nav-links .submenu ul li {
+  width: 100%;
+}
+
+.nav-links .submenu ul li a {
+  padding: 8px 20px;
+  color: #555;
+}
+
+.nav-links .submenu ul li a:hover {
+  background-color: #f0f0f0;
+}
+
+/* Search bar and cart icon group */
+.search-cart-group {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space between search bar and cart icon */
+  margin-left: 20px; /* Space between Categories and search bar */
+  flex-shrink: 0; /* Prevent from shrinking */
+}
+
+.search-cart-group form {
+  display: flex;
+  align-items: center;
+}
+
+.search-cart-group input {
+    /* Existing inline styles are fine, or override here if needed */
+}
+
+.search-cart-group button {
+    /* Existing inline styles are fine, or override here if needed */
+}
+
+.search-cart-group .cart-icon {
+  color: #333;
+  font-size: 1.2em;
+  position: relative;
+}
+
+/* Mobile Menu Trigger (Hamburger Icon) */
+.menu-trigger {
+  display: none; /* Hidden on desktop */
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1001;
+  color: #333;
+  margin-left: 20px; /* Space from search/cart group */
+  flex-shrink: 0;
+}
+
+.menu-trigger span {
+  font-size: 16px;
+  display: block;
+}
+
+
+/* --- Media Queries for Mobile Responsiveness --- */
+
+@media (max-width: 991px) { /* Adjust breakpoint as needed */
+  .header-content-wrapper {
+    flex-wrap: wrap; /* Allow logo and trigger to wrap */
+    justify-content: space-between; /* Logo left, trigger right */
+    padding: 10px 20px;
+  }
+
+  .header-logo {
+    flex-grow: 1; /* Allow logo to take space on mobile if needed */
+  }
+  .header-logo img {
+      margin-right: 0; /* Remove desktop margin */
+  }
+
+  /* Main nav wrapper (now contains all mobile menu items) */
+  .main-nav-wrapper {
+    flex-direction: column; /* Stack vertically */
+    width: 100%; /* Full width */
+    background-color: #fff;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    padding: 10px 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    z-index: 999;
+    align-items: stretch; /* Stretch items to fill width */
+    justify-content: flex-start; /* Align content to start */
+    margin-left: 0; /* Remove desktop margin */
+  }
+
+  /* Hide mobile nav wrapper by default */
+  .header-content-wrapper:not(.active) .main-nav-wrapper {
+    display: none; /* Crucial: Hides the entire nav wrapper */
+  }
+
+  /* Show mobile nav wrapper when active */
+  .header-content-wrapper.active .main-nav-wrapper {
+    display: flex;
+    max-height: 500px;
+    padding: 20px 0;
+  }
+
+  /* Show mobile menu trigger */
+  .menu-trigger {
+    display: block;
+    margin-left: auto; /* Push to right */
+  }
+
+  /* Adjust individual navigation items for mobile */
+  .nav-links {
+    flex-direction: column; /* Stack nav links vertically */
+    width: 100%;
+    margin-top: 10px; /* Space from top of mobile menu */
+  }
+  .nav-links li {
+    width: 100%;
+    text-align: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .nav-links li:last-child {
+      border-bottom: none;
+  }
+
+  .nav-links li a {
+      padding: 10px 0; /* Reset horizontal padding for mobile */
+  }
+
+  /* Mobile Submenu behavior */
+  .nav-links .submenu ul {
+    position: static;
+    box-shadow: none;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+    padding-left: 20px;
+    width: 100%;
+    max-height: 0; /* For mobile submenu toggle animation if implemented */
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+  }
+
+  .nav-links .submenu:hover ul {
+      display: none;
+  }
+
+  /* Adjust search bar and cart for mobile within the nav */
+  .search-cart-group {
+    flex-direction: row; /* Keep search & cart in a row for mobile, but centered */
+    justify-content: center; /* Center horizontally */
+    width: 100%; /* Take full width */
+    padding: 15px 0; /* Vertical padding */
+    margin-left: 0; /* Remove desktop margin */
+    border-top: 1px solid #eee; /* Separator above it */
+  }
+
+  .search-cart-group form {
+    width: 80%; /* Adjust width for mobile search bar */
+    justify-content: center;
+  }
+}

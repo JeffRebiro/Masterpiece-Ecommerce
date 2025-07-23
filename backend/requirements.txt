@@ -1,0 +1,9 @@
+Django>=4.2
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.0
+pillow>=10.0.0
+sendgrid>=6.10.0
+xhtml2pdf>=0.2.11
+python-decouple>=3.8
+requests>=2.31.0
+djangorestframework-simplejwt>=5.2.2

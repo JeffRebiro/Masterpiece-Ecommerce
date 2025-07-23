@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/Hero.png" />
+    <link rel="stylesheet" type="text/css" href="./src/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./src/assets/css/font-awesome.css">
+    <link rel="stylesheet" href="./src/assets/css/templatemo-hexashop.css">
+    <link rel="stylesheet" href="./src/assets/css/owl-carousel.css">
+    <link rel="stylesheet" href="./src/assets/css/lightbox.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open Sans">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    h1,h2,h3,h4,h5,h6 {font-family: "Oswald"}
+    body {font-family: "Open Sans"}
+    </style>
+    <title>Masterpiece Empire</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  </head>
+  <body>
+    <div id="root"></div>
+        <!-- jQuery -->
+    <script src="./src/assets/js/jquery-2.1.0.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="./src/assets/js/popper.js"></script>
+    <script src="./src/assets/js/bootstrap.min.js"></script>
+    <script type="module" src="/src/main.jsx"></script>
+    <script src="./src/assets/js/owl-carousel.js"></script>
+    <script src="./src/assets/js/accordions.js"></script>
+    <script src="./src/assets/js/datepicker.js"></script>
+    <script src="./src/assets/js/scrollreveal.min.js"></script>
+    <script src="./src/assets/js/waypoints.min.js"></script>
+    <script src="./src/assets/js/jquery.counterup.min.js"></script>
+    <script src="./src/assets/js/imgfix.min.js"></script> 
+    <script src="./src/assets/js/slick.js"></script> 
+    <script src="./src/assets/js/lightbox.js"></script> 
+    <script src="./src/assets/js/isotope.js"></script> 
+
+        <!-- Global Init -->
+    <!-- <script src="assets/js/custom.js"></script> -->
+
+    <script>
+
+        $(function() {
+            var selectedClass = "";
+            $("p").click(function(){
+            selectedClass = $(this).attr("data-rel");
+            $("#portfolio").fadeTo(50, 0.1);
+                $("#portfolio div").not("."+selectedClass).fadeOut();
+            setTimeout(function() {
+              $("."+selectedClass).fadeIn();
+              $("#portfolio").fadeTo(50, 1);
+            }, 500);
+                
+            });
+        });
+
+    </script>
+        <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function () {
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/66f694354cbc4814f7dfebf3/1i8pj5sfu';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+  </body>
+</html>
