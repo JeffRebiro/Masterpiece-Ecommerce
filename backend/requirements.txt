@@ -7,3 +7,4 @@ xhtml2pdf>=0.2.11
 python-decouple>=3.8
 requests>=2.31.0
 djangorestframework-simplejwt>=5.2.2
+gunicorn
