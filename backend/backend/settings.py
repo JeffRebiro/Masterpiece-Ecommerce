@@ -108,3 +108,8 @@ SERVER_EMAIL = config('DEFAULT_FROM_EMAIL')
 
 SENDGRID_API_KEY = config('SENDGRID_API_KEY')
 COURIER_ORDERS_RECIPIENT = config("COURIER_ORDERS_RECIPIENT", default="masterpiecempireorders@gmail.com")
+
+import sys
+if 'runserver' not in sys.argv:
+    DEBUG = True
+    ALLOWED_HOSTS = ['*']
