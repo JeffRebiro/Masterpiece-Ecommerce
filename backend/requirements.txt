@@ -8,3 +8,5 @@ python-decouple>=3.8
 requests>=2.31.0
 djangorestframework-simplejwt>=5.2.2
 gunicorn
+whitenoise
+dj-database-url-3.0.1

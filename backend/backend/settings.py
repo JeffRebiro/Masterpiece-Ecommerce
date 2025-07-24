@@ -1,3 +1,4 @@
+import dj_database_url
 from pathlib import Path
 import os
 from decouple import config, Csv  # NEW
@@ -33,6 +34,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -57,10 +59,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'megamall',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -84,8 +92,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Whitenoise setup
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
