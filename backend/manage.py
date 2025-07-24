@@ -17,18 +17,18 @@ def main():
     execute_from_command_line(sys.argv)
 
 if __name__ == '__main__':
-    # === AUTO MIGRATE AND DUMMY DATA IF NEEDED ===
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')  # 🛠️ Needed before setup()
+
     try:
         import django
-        django.setup()
+        django.setup()  # ✅ this loads settings correctly
+
         from megamall.models import Product, Category
         from django.db import OperationalError
 
         if not Product.objects.exists():
             print("🔧 First-time setup: Running migrations and creating default data...")
-            # Make sure at least one category exists
             category, _ = Category.objects.get_or_create(name="Default")
-            # Create a sample product
             Product.objects.create(
                 name="Test Product",
                 price=100,
