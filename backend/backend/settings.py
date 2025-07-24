@@ -57,7 +57,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # PostgreSQL for production using dj_database_url
 DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
+    'default': dj_database_url.config(
+        default='postgresql://localhost:5432/megamall',  # fallback if not set
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
