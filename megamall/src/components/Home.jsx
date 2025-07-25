@@ -1,5 +1,22 @@
 import React, { useEffect } from 'react';
-
+import pws from '../assets/images/pws.png';
+import mmall from '../assets/images/mmall.jpg';
+import megamall from '../assets/images/Megamall.png';
+import s1 from '../assets/images/s1.jpg';
+import s2 from '../assets/images/s2.jpg';
+import s3 from '../assets/images/s3.jpg';
+import s4 from '../assets/images/s4.jpg';
+import courier from '../assets/images/courier.png';
+import law from '../assets/images/law.png';
+import s5 from '../assets/images/s5.jpg';
+import s6 from '../assets/images/s6.jpg';
+import s7 from '../assets/images/s7.webp';
+import forhire from '../assets/images/forhire.png';
+import h4 from '../assets/images/4H.png';
+import s8 from '../assets/images/s8.webp';
+import s9 from '../assets/images/s9.jpeg';
+import s10 from '../assets/images/s10.png';
+import s11 from '../assets/images/s11.jpg';
 const Home = () => {
   useEffect(() => {
     const likeFunction = (el) => {
@@ -27,7 +44,7 @@ const Home = () => {
             <header className="w3-display-container w3-wide" id="home">
               <img
                 className="w3-image"
-                src="./src/assets/images/pws.png"
+                src={pws}
                 alt="Fashion Blog"
                 width="600"
                 height="1060"
@@ -46,7 +63,7 @@ const Home = () => {
                   </div>
                   <div className="w3-justify">
                     <a href="/products"> 
-                      <img src="./src/assets/images/mmall.jpg" alt="Girl Hat" style={{ width: '100%' }} className="w3-padding-16" />
+                      <img src={mmall} alt="Girl Hat" style={{ width: '100%' }} className="w3-padding-16" />
                     </a>
                     <p><strong>More Hats!</strong>I am crazy about hats these days. Some text about this blog entry. Fashion fashion and mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sedtellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.
                       Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
@@ -67,7 +84,7 @@ const Home = () => {
               {/* Sidebar */}
               <div className="w3-col l4">
                 <div className="w3-white w3-margin">
-                  <img src="./src/assets/images/Megamall.png" alt="Jane" className="w3-grayscale" />
+                  <img src={megamall} alt="Jane" className="w3-grayscale" />
                   <div className="w3-container w3-black">
                     <h4>At Megamall, we offer solutions tailored to your needs. Whether you’re short on time to shop online or looking for something unique and special, we’ve got you covered.</h4>
                   </div>
@@ -79,7 +96,7 @@ const Home = () => {
                   <ul className="w3-ul w3-hoverable w3-white">
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s1.jpg"
+                        src={s1}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '69px' }}
@@ -92,7 +109,7 @@ const Home = () => {
                     </li>
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s2.jpg"
+                        src={s2}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '69px' }}
@@ -105,7 +122,7 @@ const Home = () => {
                     </li>
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s3.jpg"
+                        src={s3}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '69px' }}
@@ -118,7 +135,7 @@ const Home = () => {
                     </li>
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s4.jpg"
+                        src={s4}
                         alt="Image"
                         className="w3-left w3-margin-right w3-sepia"
                         style={{ width: '69px' }}
@@ -150,7 +167,7 @@ const Home = () => {
                   </div>
                   <div className="w3-justify">
                     <a href="/courier">
-                    <img src="./src/assets/images/courier.png" alt="Girl Hat" style={{ width: '100%' }} className="w3-padding-16" />
+                    <img src={courier} alt="Girl Hat" style={{ width: '100%' }} className="w3-padding-16" />
                     </a>
                     <p><strong>More Hats!</strong>I am crazy about hats these days. Some text about this blog entry. Fashion fashion and mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sedtellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.
                       Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
@@ -178,7 +195,7 @@ const Home = () => {
               {/* Sidebar */}
               <div className="w3-col l4">
                 <div className="w3-white w3-margin">
-                  <img src="./src/assets/images/law.png" alt="Jane" style={{ width: '100%' }} className="w3-grayscale" />
+                  <img src={law} alt="Jane" style={{ width: '100%' }} className="w3-grayscale" />
                   <div className="w3-container w3-black">
                     <h4>Our courier service company provides fast, reliable, and secure delivery solutions tailored to meet personal and business needs. </h4>
                   </div>
@@ -190,7 +207,7 @@ const Home = () => {
                   <ul className="w3-ul w3-hoverable w3-white">
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s5.jpg"
+                        src={s5}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '80px' }}
@@ -203,7 +220,7 @@ const Home = () => {
                     </li>
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s6.jpg"
+                        src={s6}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '80px' }}
@@ -216,7 +233,7 @@ const Home = () => {
                     </li>
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s7.webp"
+                        src={s7}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '68px' }}
@@ -250,7 +267,7 @@ const Home = () => {
                   </div>
                   <div className="w3-justify">
                     <a href="/hire-items">
-                    <img src="./src/assets/images/forhire.png" alt="Girl Hat" style={{ width: '100%', height: '9%' }} className="w3-padding-16" />
+                    <img src={forhire} alt="Girl Hat" style={{ width: '100%', height: '9%' }} className="w3-padding-16" />
                     </a>
                     <p><strong>More Hats!</strong>I am crazy about hats these days. Some text about this blog entry. Fashion fashion and mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sedtellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.
                       Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
@@ -271,7 +288,7 @@ const Home = () => {
               {/* Sidebar */}
               <div className="w3-col l4">
                 <div className="w3-white w3-margin">
-                  <img src="./src/assets/images/4H.png" alt="Jane" style={{ width: '100%' }} className="w3-grayscale" />
+                  <img src={h4} alt="Jane" style={{ width: '100%' }} className="w3-grayscale" />
                   <div className="w3-container w3-black">
                     <h4>Whether you're planning a project or hosting an occasion, we provide flexible rental options at affordable rates. </h4>
                   </div>
@@ -283,7 +300,7 @@ const Home = () => {
                   <ul className="w3-ul w3-hoverable w3-white">
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s8.webp"
+                        src={s8}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '63px' }}
@@ -296,7 +313,7 @@ const Home = () => {
                     </li>
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s9.jpeg"
+                        src={s9}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '69px' }}
@@ -309,7 +326,7 @@ const Home = () => {
                     </li>
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s10.png"
+                        src={s10}
                         alt="Image"
                         className="w3-left w3-margin-right"
                         style={{ width: '65px' }}
@@ -322,7 +339,7 @@ const Home = () => {
                     </li>
                     <li className="w3-padding-16">
                       <img
-                        src="./src/assets/images/s11.jpg"
+                        src={s11}
                         alt="Image"
                         className="w3-left w3-margin-right w3-sepia"
                         style={{ width: '69px' }}

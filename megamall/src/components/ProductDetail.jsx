@@ -7,9 +7,20 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const getImageUrl = (image) => {
   if (!image) return "";
+
+  // If it's a full URL from the backend or CDN
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
+
+  // If served from Django /media/
   if (image.startsWith("/media/")) return `${apiUrl}${image}`;
-  return `${apiUrl}media/products/${image}`;
+
+  // Otherwise, treat as local image from assets
+  try {
+    return new URL(`../assets/images/${image}`, import.meta.url).href;
+  } catch (e) {
+    console.warn("Image not found:", image);
+    return "";
+  }
 };
 
 const ProductDetail = () => {

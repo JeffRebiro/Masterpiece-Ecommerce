@@ -3,13 +3,15 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../components/CartContext";
 
+// Use VITE_API_URL for backend API
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
+// Only use full backend URL for /media/ images
 const getImageUrl = (image) => {
   if (!image) return "";
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
   if (image.startsWith("/media/")) return `${API_BASE_URL}${image}`;
-  return `${API_BASE_URL}/media/hire_items/${image}`;
+  return `/src/assets/images/${image}`; // Use Vite-relative local path
 };
 
 const ItemsForHireDetails = () => {
@@ -25,10 +27,8 @@ const ItemsForHireDetails = () => {
   useEffect(() => {
     axios
       .get(`${API_BASE_URL}/api/hire-items/${id}/`)
-      .then((res) => {
-        setItem(res.data);
-      })
-      .catch((err) => console.error("Error fetching hire item details:", err));
+      .then((res) => setItem(res.data))
+      .catch((err) => console.error("Error fetching hire item:", err));
   }, [id]);
 
   const handleAddToCart = () => {
