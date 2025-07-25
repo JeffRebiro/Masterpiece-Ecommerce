@@ -1,23 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const getImageUrl = (path) => new URL(`../assets/images/${path}`, import.meta.url).href;
 
 const Home = () => {
-  useEffect(() => {
-    const likeFunction = (el) => {
-      el.innerHTML = '<b><i class="fa fa-thumbs-up"></i> Liked</b>';
-    };
-
-    const myFunction = (id) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.style.display = element.style.display === 'none' ? 'block' : 'none';
-      }
-    };
-
-    window.likeFunction = likeFunction;
-    window.myFunction = myFunction;
-  }, []);
+  const handleLike = (e) => {
+    e.target.innerHTML = '<b><i class="fa fa-thumbs-up"></i> Liked</b>';
+  };
 
   return (
     <>
@@ -38,15 +27,15 @@ const Home = () => {
             <div className="w3-col l8 s12">
               <div className="w3-container w3-white w3-margin w3-padding-large">
                 <div className="w3-center">
-                  <a href="/products"><h3>Masterpiece Megamall</h3></a>
+                  <Link to="/products"><h3>Masterpiece Megamall</h3></Link>
                 </div>
                 <div className="w3-justify">
-                  <a href="/products">
+                  <Link to="/products">
                     <img src={getImageUrl('mmall.jpg')} alt="Girl Hat" style={{ width: '100%' }} className="w3-padding-16" />
-                  </a>
+                  </Link>
                   <p><strong>More Hats!</strong> I am crazy about hats these days...</p>
                   <p className="w3-left">
-                    <button className="w3-button w3-white w3-border" onClick={(e) => window.likeFunction(e.target)}>
+                    <button className="w3-button w3-white w3-border" onClick={handleLike}>
                       <b><i className="fa fa-thumbs-up"></i> Like</b>
                     </button>
                   </p>
@@ -73,7 +62,7 @@ const Home = () => {
                   ].map(([img, title, desc, link], idx) => (
                     <li className="w3-padding-16" key={idx}>
                       <img src={getImageUrl(img)} alt="Product" className="w3-left w3-margin-right" style={{ width: '69px' }} />
-                      <a href={link}><span className="w3-large">{title}</span></a><br />
+                      <Link to={link}><span className="w3-large">{title}</span></Link><br />
                       <span>{desc}</span>
                     </li>
                   ))}
@@ -91,15 +80,15 @@ const Home = () => {
             <div className="w3-col l8 s12">
               <div className="w3-container w3-white w3-margin w3-padding-large">
                 <div className="w3-center">
-                  <a href="/courier"><h3>Courier Services</h3></a>
+                  <Link to="/courier"><h3>Courier Services</h3></Link>
                 </div>
                 <div className="w3-justify">
-                  <a href="/courier">
+                  <Link to="/courier">
                     <img src={getImageUrl('courier.png')} alt="Courier" style={{ width: '100%' }} className="w3-padding-16" />
-                  </a>
+                  </Link>
                   <p><strong>More Hats!</strong> I am crazy about hats these days...</p>
                   <p className="w3-left">
-                    <button className="w3-button w3-white w3-border" onClick={(e) => window.likeFunction(e.target)}>
+                    <button className="w3-button w3-white w3-border" onClick={handleLike}>
                       <b><i className="fa fa-thumbs-up"></i> Like</b>
                     </button>
                   </p>
@@ -110,7 +99,7 @@ const Home = () => {
             {/* Sidebar */}
             <div className="w3-col l4">
               <div className="w3-white w3-margin">
-                <img src={getImageUrl('law.png')} alt="Jane" style={{ width: '100%' }} className="w3-grayscale" />
+                <img src={getImageUrl('law.png')} alt="Courier" style={{ width: '100%' }} className="w3-grayscale" />
                 <div className="w3-container w3-black">
                   <h4>Our courier service company provides fast, reliable delivery...</h4>
                 </div>
@@ -121,11 +110,11 @@ const Home = () => {
                   {[
                     ['s5.jpg', 'Documents', 'Invoices or school documents'],
                     ['s6.jpg', 'Small Luggage', 'Bags or Boxes'],
-                    ['s7.webp', 'Big Parcels', "Refrigirators or TV'S"]
+                    ['s7.webp', 'Big Parcels', "Refrigerators or TV's"]
                   ].map(([img, title, desc], idx) => (
                     <li className="w3-padding-16" key={idx}>
                       <img src={getImageUrl(img)} alt="Delivery" className="w3-left w3-margin-right" style={{ width: '80px' }} />
-                      <a href="/courier"><span className="w3-large">{title}</span></a><br />
+                      <Link to="/courier"><span className="w3-large">{title}</span></Link><br />
                       <span>{desc}</span>
                     </li>
                   ))}
@@ -143,15 +132,15 @@ const Home = () => {
             <div className="w3-col l8 s12">
               <div className="w3-container w3-white w3-margin w3-padding-large">
                 <div className="w3-center">
-                  <a href="/hire-items"><h3>Items for Hire</h3></a>
+                  <Link to="/hire-items"><h3>Items for Hire</h3></Link>
                 </div>
                 <div className="w3-justify">
-                  <a href="/hire-items">
+                  <Link to="/hire-items">
                     <img src={getImageUrl('forhire.png')} alt="For Hire" style={{ width: '100%' }} className="w3-padding-16" />
-                  </a>
+                  </Link>
                   <p><strong>More Hats!</strong> I am crazy about hats these days...</p>
                   <p className="w3-left">
-                    <button className="w3-button w3-white w3-border" onClick={(e) => window.likeFunction(e.target)}>
+                    <button className="w3-button w3-white w3-border" onClick={handleLike}>
                       <b><i className="fa fa-thumbs-up"></i> Like</b>
                     </button>
                   </p>
@@ -178,7 +167,7 @@ const Home = () => {
                   ].map(([img, title, desc], idx) => (
                     <li className="w3-padding-16" key={idx}>
                       <img src={getImageUrl(img)} alt="Hire" className="w3-left w3-margin-right" style={{ width: '69px' }} />
-                      <a href="/hire-items"><span className="w3-large">{title}</span></a><br />
+                      <Link to="/hire-items"><span className="w3-large">{title}</span></Link><br />
                       <span>{desc}</span>
                     </li>
                   ))}
