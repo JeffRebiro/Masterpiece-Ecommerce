@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import sys
 from decouple import config, Csv
 import dj_database_url
 
@@ -81,7 +82,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ORIGIN_WHITELIST = [
+# ✅ CORS SETTINGS
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'https://masterpiece-ecommerce-44ez-lpk8lkq63-jeffrebiros-projects.vercel.app',
@@ -96,6 +99,7 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'megamall.GuestUser'
 
+# ✅ EMAIL SETTINGS
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.sendgrid.net')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
@@ -109,7 +113,7 @@ SERVER_EMAIL = config('DEFAULT_FROM_EMAIL')
 SENDGRID_API_KEY = config('SENDGRID_API_KEY')
 COURIER_ORDERS_RECIPIENT = config("COURIER_ORDERS_RECIPIENT", default="masterpiecempireorders@gmail.com")
 
-import sys
-if 'runserver' not in sys.argv:
+# ✅ Optional: Override for local dev
+if 'runserver' in sys.argv:
     DEBUG = True
     ALLOWED_HOSTS = ['*']
