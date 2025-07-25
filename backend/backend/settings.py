@@ -87,7 +87,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
-    'https://masterpiece-ecommerce-44ez-lpk8lkq63-jeffrebiros-projects.vercel.app',
+    ''https://masterpiece-ecommerce-44ez.vercel.app'',
     'https://masterpiece-ecommerce.onrender.com',
 ]
 
