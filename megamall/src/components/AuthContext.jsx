@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 
 const AuthContext = createContext();
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [jwtToken, setJwtToken] = useState(localStorage.getItem("token") || null);
@@ -19,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/user-profile/", {
+        const response = await fetch(`${apiUrl}user-profile/`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
             "Content-Type": "application/json",
@@ -42,7 +44,7 @@ export const AuthProvider = ({ children }) => {
 
   const refreshMpesaAccessToken = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/mpesa/token/", {
+      const response = await fetch(`${apiUrl}mpesa/token/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwtToken}`,
@@ -78,7 +80,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const placeOrder = async (orderData) => {
-    const response = await fetch("http://localhost:8000/api/orders/", {
+    const response = await fetch(`${apiUrl}orders/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

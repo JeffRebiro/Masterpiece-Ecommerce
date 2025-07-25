@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { CartContext } from "../components/CartContext"; // Import the context
+import { CartContext } from "../components/CartContext";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const getImageUrl = (image) => {
   if (!image) return "";
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
-  if (image.startsWith("/media/")) return `http://127.0.0.1:8000${image}`;
-  return `http://127.0.0.1:8000/media/products/${image}`;
+  if (image.startsWith("/media/")) return `${apiUrl}${image}`;
+  return `${apiUrl}media/products/${image}`;
 };
 
 const ProductDetail = () => {
@@ -17,11 +19,11 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
 
-  const { cartItems, setCartItems } = useContext(CartContext); // Use context
+  const { cartItems, setCartItems } = useContext(CartContext);
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/products/${id}/`)
+      .get(`${apiUrl}api/products/${id}/`)
       .then((res) => {
         setProduct(res.data);
       })
@@ -68,7 +70,6 @@ const ProductDetail = () => {
     <section className="section" id="product">
       <div className="container">
         <div className="row">
-          {/* Image */}
           <div className="col-lg-8">
             <div className="left-images">
               <div style={{
@@ -88,7 +89,6 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* Details */}
           <div className="col-lg-4">
             <div className="right-content">
               <h4>{product.name}</h4>

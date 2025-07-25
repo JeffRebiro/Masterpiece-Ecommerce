@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
+// Use environment variable for base API URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
 // Helper to build image URL
 const getImageUrl = (image) => {
   if (!image) return "";
   if (image.startsWith("http")) return image;
-  return `http://127.0.0.1:8000/media/products/${image}`;
+  return `${API_BASE_URL}/media/products/${image}`;
 };
 
 // Converts slug to readable name
@@ -27,8 +30,8 @@ const CategoryPage = () => {
   useEffect(() => {
     setLoading(true);
 
-    // Directly use slug in query
-    axios.get(`http://127.0.0.1:8000/api/products/?category=${categoryName}`)
+    // Use env variable in API call
+    axios.get(`${API_BASE_URL}/api/products/?category=${categoryName}`)
       .then((res) => {
         setProducts(res.data); // assume backend already filtered by slug
         setLoading(false);

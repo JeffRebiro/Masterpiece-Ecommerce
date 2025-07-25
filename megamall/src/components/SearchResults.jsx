@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 // Helper function for image URL
 const getImageUrl = (image) => {
   if (!image) return "";
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
-  if (image.startsWith("/media/")) return `http://127.0.0.1:8000${image}`;
-  return `http://127.0.0.1:8000/media/products/${image}`;
+  if (image.startsWith("/media/")) return `${apiUrl}${image}`;
+  return `${apiUrl}media/products/${image}`;
 };
 
 const SearchResults = () => {
@@ -18,7 +20,8 @@ const SearchResults = () => {
   const query = new URLSearchParams(location.search).get("query")?.toLowerCase() || "";
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/products/")
+    axios
+      .get(`${apiUrl}api/products/`)
       .then((res) => {
         setAllProducts(res.data);
       })
@@ -52,19 +55,19 @@ const SearchResults = () => {
             <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={item.id}>
               <div className="item">
                 <div className="thumb position-relative">
-
-
-                  <div style={{
-                    width: "100%",
-                    height: "390px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    overflow: "hidden",
-                    borderRadius: "12px",
-                    border: "1px solid #ddd",
-                    backgroundColor: "#f9f9f9"
-                  }}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "390px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
+                      borderRadius: "12px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f9f9f9",
+                    }}
+                  >
                     <img
                       src={getImageUrl(item.image)}
                       alt={item.name}
@@ -72,7 +75,7 @@ const SearchResults = () => {
                       style={{
                         maxWidth: "100%",
                         maxHeight: "100%",
-                        objectFit: "contain"
+                        objectFit: "contain",
                       }}
                     />
                   </div>

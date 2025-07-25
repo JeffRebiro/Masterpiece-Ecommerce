@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 8;
 
-// Helper function to build correct image URL
+// Helper to build full image URL
 const getImageUrl = (image) => {
   if (!image) return "";
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
@@ -19,11 +19,8 @@ const ProductList = () => {
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/products/")
       .then((response) => {
-        // --- DIAGNOSTIC LOG ---
-        console.log("API Response Data:", response.data);
+        console.log("Fetched Products:", response.data);
         setProducts(response.data);
-        console.log("Products state after setProducts:", response.data);
-        // --- END DIAGNOSTIC LOG ---
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -37,19 +34,24 @@ const ProductList = () => {
   return (
     <section className="section" id="men">
       <div className="container">
+        {/* Heading */}
         <div className="row mb-4">
           <div className="col-lg-6">
             <div className="section-heading">
               <h2>Our Latest...</h2>
-              <span>Details to details is what makes Megamall different from others.</span>
+              <span>
+                Details to details is what makes Megamall different from others.
+              </span>
             </div>
           </div>
         </div>
 
+        {/* Products */}
         <div className="row">
           {currentProducts.map((item) => (
             <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={item.id}>
               <div className="item">
+                {/* Image Hover */}
                 <div className="thumb position-relative">
                   <div className="hover-content">
                     <ul>
@@ -71,18 +73,20 @@ const ProductList = () => {
                     </ul>
                   </div>
 
-                  {/* Responsive Image Wrapper */}
-                  <div style={{
-                    width: "100%",
-                    height: "390px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    overflow: "hidden",
-                    borderRadius: "12px",
-                    border: "1px solid #ddd",
-                    backgroundColor: "#f9f9f9"
-                  }}>
+                  {/* Responsive Image */}
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "390px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
+                      borderRadius: "12px",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f9f9f9",
+                    }}
+                  >
                     <img
                       src={getImageUrl(item.image)}
                       alt={item.name}
@@ -90,12 +94,13 @@ const ProductList = () => {
                       style={{
                         maxWidth: "100%",
                         maxHeight: "100%",
-                        objectFit: "contain"
+                        objectFit: "contain",
                       }}
                     />
                   </div>
                 </div>
 
+                {/* Title & Price */}
                 <div className="down-content">
                   <h4 style={{ color: "black", fontWeight: "bold" }}>
                     <Link
@@ -113,42 +118,49 @@ const ProductList = () => {
         </div>
 
         {/* Pagination */}
-        <div className="d-flex justify-content-center mt-4">
-          <nav>
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                >
-                  Previous
-                </button>
-              </li>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .slice(currentPage - 1, currentPage + 3)
-                .map((page) => (
-                  <li
-                    key={page}
-                    className={`page-item ${currentPage === page ? "active" : ""}`}
+        {totalPages > 1 && (
+          <div className="d-flex justify-content-center mt-4">
+            <nav>
+              <ul className="pagination">
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   >
-                    <button className="page-link" onClick={() => setCurrentPage(page)}>
-                      {page}
-                    </button>
-                  </li>
-                ))}
+                    Previous
+                  </button>
+                </li>
 
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .slice(
+                    Math.max(currentPage - 2, 0),
+                    Math.min(currentPage + 2, totalPages)
+                  )
+                  .map((page) => (
+                    <li
+                      key={page}
+                      className={`page-item ${currentPage === page ? "active" : ""}`}
+                    >
+                      <button className="page-link" onClick={() => setCurrentPage(page)}>
+                        {page}
+                      </button>
+                    </li>
+                  ))}
+
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        )}
       </div>
     </section>
   );

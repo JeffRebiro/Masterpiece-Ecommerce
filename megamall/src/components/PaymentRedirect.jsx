@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const PaymentRedirect = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const PaymentRedirect = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/orders/${orderId}/`, {
+        const response = await fetch(`${apiUrl}orders/${orderId}/`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
           },
@@ -44,7 +46,7 @@ const PaymentRedirect = () => {
   const handlePayment = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/payment/mpesa/initiate/", {
+      const response = await fetch(`${apiUrl}payment/mpesa/initiate/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

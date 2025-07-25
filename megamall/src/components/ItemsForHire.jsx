@@ -4,12 +4,15 @@ import { Link } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 8;
 
+// ✅ Get API base URL from environment variable
+const apiUrl = import.meta.env.VITE_API_URL;
+
 // Helper function to build correct image URL
 const getImageUrl = (image) => {
   if (!image) return "";
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
-  if (image.startsWith("/media/")) return `http://127.0.0.1:8000${image}`;
-  return `http://127.0.0.1:8000/media/hire_items/${image}`;
+  if (image.startsWith("/media/")) return `${apiUrl}${image}`;
+  return `${apiUrl}/media/hire_items/${image}`;
 };
 
 const ItemsForHire = () => {
@@ -17,7 +20,7 @@ const ItemsForHire = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/hire-items/")
+    axios.get(`${apiUrl}/api/hire-items/`)
       .then((response) => {
         console.log("Hire Items:", response.data);
         setHireItems(response.data);
@@ -50,21 +53,9 @@ const ItemsForHire = () => {
                 <div className="thumb position-relative">
                   <div className="hover-content">
                     <ul>
-                      <li>
-                        <Link to={`/hire-item/${item.id}`}>
-                          
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={`/hire-item/${item.id}`}>
-                          
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={`/hire-item/${item.id}`}>
-                          
-                        </Link>
-                      </li>
+                      <li><Link to={`/hire-item/${item.id}`}></Link></li>
+                      <li><Link to={`/hire-item/${item.id}`}></Link></li>
+                      <li><Link to={`/hire-item/${item.id}`}></Link></li>
                     </ul>
                   </div>
 

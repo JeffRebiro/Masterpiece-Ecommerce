@@ -3,11 +3,13 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../components/CartContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const getImageUrl = (image) => {
   if (!image) return "";
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
-  if (image.startsWith("/media/")) return `http://127.0.0.1:8000${image}`;
-  return `http://127.0.0.1:8000/media/hire_items/${image}`;
+  if (image.startsWith("/media/")) return `${API_BASE_URL}${image}`;
+  return `${API_BASE_URL}/media/hire_items/${image}`;
 };
 
 const ItemsForHireDetails = () => {
@@ -22,7 +24,7 @@ const ItemsForHireDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/hire-items/${id}/`)
+      .get(`${API_BASE_URL}/api/hire-items/${id}/`)
       .then((res) => {
         setItem(res.data);
       })
