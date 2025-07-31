@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.messages', # This is correctly enabled
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
