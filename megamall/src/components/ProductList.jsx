@@ -4,12 +4,19 @@ import { Link } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 8;
 
-// Helper to build full image URL
+// Use your correct base API URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
+
+// Helper to build image URLs correctly
 const getImageUrl = (image) => {
   if (!image) return "";
-  if (image.startsWith("http://") || image.startsWith("https://")) return image;
-  if (image.startsWith("/media/")) return `http://127.0.0.1:8000${image}`;
-  return `http://127.0.0.1:8000/media/products/${image}`;
+  try {
+    if (image.startsWith("http://") || image.startsWith("https://")) return image;
+    if (image.startsWith("/media/")) return new URL(image, API_BASE_URL).origin + image;
+    return `${new URL("/media/products/" + image, API_BASE_URL).href}`;
+  } catch {
+    return "";
+  }
 };
 
 const ProductList = () => {
@@ -17,9 +24,8 @@ const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/products/")
+    axios.get(`${API_BASE_URL}/products/`)
       .then((response) => {
-        console.log("Fetched Products:", response.data);
         setProducts(response.data);
       })
       .catch((error) => {
@@ -51,7 +57,6 @@ const ProductList = () => {
           {currentProducts.map((item) => (
             <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={item.id}>
               <div className="item">
-                {/* Image Hover */}
                 <div className="thumb position-relative">
                   <div className="hover-content">
                     <ul>
@@ -73,7 +78,6 @@ const ProductList = () => {
                     </ul>
                   </div>
 
-                  {/* Responsive Image */}
                   <div
                     style={{
                       width: "100%",
@@ -100,7 +104,6 @@ const ProductList = () => {
                   </div>
                 </div>
 
-                {/* Title & Price */}
                 <div className="down-content">
                   <h4 style={{ color: "black", fontWeight: "bold" }}>
                     <Link
