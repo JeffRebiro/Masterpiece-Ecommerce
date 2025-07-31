@@ -11,7 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # Use environment variable for DEBUG, default to False for production
-DEBUG = config('DEBUG', default=False, cast=bool)
+print(f"DEBUGGING: DATABASE_URL value is: {os.environ.get('DATABASE_URL')}")
+print(f"DEBUGGING: Current DEBUG value is: {config('DEBUG', default=False, cast=bool)}")
 
 # Configure ALLOWED_HOSTS for Render deployment
 # Render automatically sets RENDER_EXTERNAL_HOSTNAME.
