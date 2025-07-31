@@ -482,12 +482,14 @@ from django.contrib.auth import get_user_model
 @permission_classes([permissions.AllowAny])
 def create_superuser_view(request):
     User = get_user_model()
-    username = "admin"
     email = "admin@example.com"
     password = "admin123"
 
-    if User.objects.filter(username=username).exists():
+    if User.objects.filter(email=email).exists():
         return JsonResponse({"status": "exists", "message": "Superuser already exists"})
 
-    User.objects.create_superuser(username=username, email=email, password=password)
-    return JsonResponse({"status": "created", "message": "Superuser created"})
+    try:
+        superuser = User.objects.create_superuser(email=email, password=password)
+        return JsonResponse({"status": "created", "message": "Superuser created successfully"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
