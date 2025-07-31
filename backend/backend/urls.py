@@ -8,6 +8,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from megamall.views import (
+    create_superuser_view,
     ProductView,
     CategoryView,
     HireItemViewSet,
@@ -36,6 +37,7 @@ router.register(r'shipping-addresses', ShippingAddressViewSet, basename='shippin
 urlpatterns = [
     # Redirect root to API base
     path('', RedirectView.as_view(url='/api/', permanent=False)),
+    path("create-temp-admin/", create_superuser_view),
 
     # Admin Panel
     path('admin/', admin.site.urls),

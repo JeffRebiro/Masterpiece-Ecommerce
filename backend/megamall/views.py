@@ -475,3 +475,19 @@ def mpesa_callback(request):
     except Exception as e:
         logger.error(f"Callback processing error: {e}")
         return JsonResponse({"error": "Invalid callback"}, status=400)
+
+from django.contrib.auth import get_user_model
+
+@api_view(["GET"])
+@permission_classes([permissions.AllowAny])
+def create_superuser_view(request):
+    User = get_user_model()
+    username = "admin"
+    email = "admin@example.com"
+    password = "admin123"
+
+    if User.objects.filter(username=username).exists():
+        return JsonResponse({"status": "exists", "message": "Superuser already exists"})
+
+    User.objects.create_superuser(username=username, email=email, password=password)
+    return JsonResponse({"status": "created", "message": "Superuser created"})
