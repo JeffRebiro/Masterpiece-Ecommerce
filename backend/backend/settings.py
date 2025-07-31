@@ -1,16 +1,29 @@
+# your_project/settings.py
+
 from pathlib import Path
 import os
 import sys
 from decouple import config, Csv
-import dj_database_url
+import dj_database_url # This import is good
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
 
+# Use environment variable for DEBUG, default to False for production
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+# Configure ALLOWED_HOSTS for Render deployment
+# Render automatically sets RENDER_EXTERNAL_HOSTNAME.
+# If DEBUG is True (local), allow all hosts. Otherwise, rely on RENDER_EXTERNAL_HOSTNAME and Csv.
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+
+if DEBUG: # For local development
+    ALLOWED_HOSTS = ['*']
+elif RENDER_EXTERNAL_HOSTNAME: # For Render production
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME]
+else: # Fallback for other production environments (or if RENDER_EXTERNAL_HOSTNAME isn't set for some reason)
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv()) # Use an empty string default if not found
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,7 +40,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Make sure WhiteNoise is correctly configured for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,7 +61,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.messages',
             ],
         },
     },
@@ -56,16 +69,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'masterpiece',
-        'USER': 'jeff',  # or 'postgres' if using default
-        'PASSWORD': 'Ilovethings7949',
-        'HOST': 'localhost',
-        'PORT': '5432',
+# ⬇️ ⬇️ ⬇️  CRITICAL CHANGE FOR DATABASE CONNECTION ⬇️ ⬇️ ⬇️
+# Use DATABASE_URL from environment for Render, fall back to local settings
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Production database on Render
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600, # Keep connections alive for performance
+            ssl_require=True, # Important for secure connections to Render's PostgreSQL
+        )
     }
-}
+else:
+    # Local development database
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'masterpiece',         # Your local PostgreSQL DB name
+            'USER': 'jeff',                # Your local PostgreSQL user
+            'PASSWORD': 'Ilovethings7949', # Your local PostgreSQL password
+            'HOST': 'localhost',           # Connect to local PostgreSQL server
+            'PORT': '5432',                # Default PostgreSQL port
+        }
+    }
+# ⬆️ ⬆️ ⬆️  END OF CRITICAL DATABASE CHANGE ⬆️ ⬆️ ⬆️
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -95,8 +125,16 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'https://masterpiece-ecommerce-44ez.vercel.app',
-    'https://masterpiece-ecommerce.onrender.com',
+    # Dynamically add your Render frontend URL or use a wildcard for Render's subdomains if needed
+    'https://masterpiece-ecommerce.onrender.com', # <--- Add your actual Render frontend URL here
 ]
+
+# If you need to allow a wildcard for Render frontend for testing (less secure for prod)
+# You might consider using CORS_ALLOWED_ORIGIN_REGEXES for more dynamic Render subdomains
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.onrender\.com$", # Allows any subdomain on .onrender.com for CORS
+]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -106,7 +144,7 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'megamall.GuestUser'
 
-# ✅ EMAIL SETTINGS
+# ✅ EMAIL SETTINGS - These are correctly using decouple
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.sendgrid.net')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
@@ -120,7 +158,8 @@ SERVER_EMAIL = config('DEFAULT_FROM_EMAIL')
 SENDGRID_API_KEY = config('SENDGRID_API_KEY')
 COURIER_ORDERS_RECIPIENT = config("COURIER_ORDERS_RECIPIENT", default="masterpiecempireorders@gmail.com")
 
-# ✅ Optional: Override for local dev
+# ✅ Optional: Override for local dev - This section is good for local debugging
 if 'runserver' in sys.argv:
-    DEBUG = True
-    ALLOWED_HOSTS = ['*']
+    DEBUG = True # Ensure DEBUG is True when running locally
+    # No need for ALLOWED_HOSTS = ['*'] here if DEBUG is already handling it above.
+    # The `if DEBUG: ALLOWED_HOSTS = ['*']` block above covers this.
