@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext'; // Assuming this provides the 'login' function
+import { useAuth } from '../components/AuthContext';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -46,15 +46,13 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (data.token) {
-        login(data.token);
-      } else if (data.access) {
-        login(data.access, data.refresh);
+      if (data.access && data.refresh) {
+        login(data.access, data.refresh); // ✅ use access + refresh tokens
+        navigate('/checkout/shipping-address/');
       } else {
         alert('Guest user created successfully! You can now log in.');
       }
 
-      navigate('/checkout/shipping-address/');
     } catch (error) {
       console.error('Error creating guest user:', error);
       setNewCustomerError(error.message);
@@ -69,7 +67,7 @@ const Login = () => {
     setLoginLoading(true);
 
     try {
-      const response = await fetch('/api/login/', {
+      const response = await fetch(`${apiUrl}/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -83,12 +81,13 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (data.access) {
-        login(data.access, data.refresh);
+      if (data.access && data.refresh) {
+        login(data.access, data.refresh); // ✅ use access + refresh tokens
         navigate('/checkout/shipping-address/');
       } else {
         throw new Error('Login successful, but no tokens received.');
       }
+
     } catch (err) {
       console.error('Login error:', err);
       setLoginError(err.message);
