@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const ITEMS_PER_PAGE = 8;
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const ItemsForHire = () => {
   const [hireItems, setHireItems] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     axios.get(`${apiUrl}/hire-items/`)
@@ -18,10 +16,6 @@ const ItemsForHire = () => {
         console.error("Error fetching hire items:", error);
       });
   }, []);
-
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = hireItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  const totalPages = Math.ceil(hireItems.length / ITEMS_PER_PAGE);
 
   return (
     <section className="section" id="hire-items">
@@ -36,7 +30,7 @@ const ItemsForHire = () => {
         </div>
 
         <div className="row">
-          {currentItems.map((item) => (
+          {hireItems.map((item) => (
             <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={item.id}>
               <div className="item">
                 <div className="thumb position-relative">

@@ -2,17 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const ITEMS_PER_PAGE = 8;
-
 // Use your correct base API URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
 
-// The getImageUrl helper is no longer needed.
-// The backend now provides the full Cloudinary URL.
-
 const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     axios.get(`${API_BASE_URL}/products/`)
@@ -23,10 +17,6 @@ const ProductList = () => {
         console.error("Error fetching products:", error);
       });
   }, []);
-
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentProducts = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 
   return (
     <section className="section" id="men">
@@ -45,7 +35,7 @@ const ProductList = () => {
 
         {/* Products */}
         <div className="row">
-          {currentProducts.map((item) => (
+          {products.map((item) => (
             <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={item.id}>
               <div className="item">
                 <div className="thumb position-relative">
