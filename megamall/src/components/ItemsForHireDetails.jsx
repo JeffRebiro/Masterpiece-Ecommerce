@@ -105,7 +105,7 @@ const ItemsForHireDetails = () => {
                 }}
               >
                 <img
-                  src={getImageUrl(item.image)}
+                  src={items.image_url}
                   alt={item.name}
                   loading="lazy"
                   style={{

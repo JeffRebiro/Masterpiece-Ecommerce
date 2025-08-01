@@ -92,7 +92,7 @@ const ProductList = () => {
                     }}
                   >
                     <img
-                      src={getImageUrl(item.image)}
+                      src={product.image_url}
                       alt={item.name}
                       crossOrigin="anonymous"
                       style={{

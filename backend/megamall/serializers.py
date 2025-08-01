@@ -5,17 +5,15 @@ from .models import Product, Category, GuestUser, ShippingAddress, Order, OrderI
 from .models import HireItem
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='category.name')
     image_url = serializers.SerializerMethodField()
+    category = serializers.CharField(source='category.name')
 
     class Meta:
         model = Product
         fields = ['id', 'name', 'price', 'image_url', 'description', 'category']
 
     def get_image_url(self, obj):
-        if obj.image and hasattr(obj.image, 'url'):
-            return obj.image.url
-        return None
+        return obj.image.url if obj.image else None
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -78,12 +76,10 @@ class HireItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HireItem
-        fields = ['id', 'name', 'details', 'hire_price_per_hour', 'hire_price_per_day', 'image_url']
+        fields = ['id', 'name', 'image_url', 'details', 'hire_price_per_hour', 'hire_price_per_day']
 
     def get_image_url(self, obj):
-        if obj.image and hasattr(obj.image, 'url'):
-            return obj.image.url
-        return None
+        return obj.image.url if obj.image else None
 
 
 from rest_framework import serializers
