@@ -17,7 +17,7 @@ const PaymentRedirect = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`${apiUrl}orders/${orderId}/`, {
+        const response = await fetch(`${apiUrl}/orders/${orderId}/`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
           },
@@ -46,7 +46,7 @@ const PaymentRedirect = () => {
   const handlePayment = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${apiUrl}payment/mpesa/initiate/`, {
+      const response = await fetch(`${apiUrl}/payment/mpesa/initiate/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
