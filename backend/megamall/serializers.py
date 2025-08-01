@@ -1,3 +1,4 @@
+import cloudinary
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.hashers import make_password
@@ -6,14 +7,15 @@ from .models import HireItem
 
 class ProductSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
-    category = serializers.CharField(source='category.name')
 
     class Meta:
         model = Product
         fields = ['id', 'name', 'price', 'image_url', 'description', 'category']
 
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else None
+        if obj.image:
+            return cloudinary.CloudinaryImage(obj.image.name).build_url(secure=True)
+        return None
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -79,10 +81,12 @@ class HireItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HireItem
-        fields = ['id', 'name', 'image_url', 'details', 'hire_price_per_hour', 'hire_price_per_day']
+        fields = ['id', 'name', 'price', 'image_url', 'description', 'category']
 
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else None
+        if obj.image:
+            return cloudinary.CloudinaryImage(obj.image.name).build_url(secure=True)
+        return None
 
 
 class CourierOrderSerializer(serializers.ModelSerializer):
