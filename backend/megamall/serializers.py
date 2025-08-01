@@ -81,7 +81,7 @@ class HireItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HireItem
-        fields = ['id', 'name', 'hire_price_per_day', 'hire_price_per_hour', 'image_url', 'description', 'category']
+        fields = ['id', 'name', 'hire_price_per_day', 'hire_price_per_hour', 'image_url', 'details']
 
     def get_image_url(self, obj):
         if obj.image:
