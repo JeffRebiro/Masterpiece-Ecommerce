@@ -7,13 +7,8 @@ const ITEMS_PER_PAGE = 8;
 // ✅ Get API base URL from environment variable
 const apiUrl = import.meta.env.VITE_API_URL;
 
-// Helper function to build correct image URL
-const getImageUrl = (image) => {
-  if (!image) return "";
-  if (image.startsWith("http://") || image.startsWith("https://")) return image;
-  if (image.startsWith("/media/")) return `${apiUrl}${image}`;
-  return `${apiUrl}/media/hire_items/${image}`;
-};
+// Helper function to build correct image URL is no longer needed
+// The backend now provides the full Cloudinary URL.
 
 const ItemsForHire = () => {
   const [hireItems, setHireItems] = useState([]);
@@ -71,7 +66,7 @@ const ItemsForHire = () => {
                     backgroundColor: "#f9f9f9"
                   }}>
                     <img
-                      src={items.image_url}
+                      src={item.image} // Replaced `items.image_url` with the correct `item.image`
                       alt={item.name}
                       crossOrigin="anonymous"
                       style={{

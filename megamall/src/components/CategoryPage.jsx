@@ -5,12 +5,8 @@ import axios from "axios";
 // Use environment variable for base API URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
 
-// Helper to build image URL
-const getImageUrl = (image) => {
-  if (!image) return "";
-  if (image.startsWith("http")) return image;
-  return `${API_BASE_URL}/media/products/${image}`;
-};
+// This helper is no longer needed since the backend now returns the full Cloudinary URL.
+// The image URL will be directly available on the `product` object as `item.image`.
 
 // Converts slug to readable name
 const slugToCategoryName = (slug) => {
@@ -66,7 +62,7 @@ const CategoryPage = () => {
                         border: "1px solid #ddd"
                       }}>
                         <img
-                          src={getImageUrl(item.image)}
+                          src={item.image} // Replaced `getImageUrl(item.image)` with `item.image`
                           alt={item.name}
                           style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
                         />

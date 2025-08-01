@@ -7,17 +7,8 @@ const ITEMS_PER_PAGE = 8;
 // Use your correct base API URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
 
-// Helper to build image URLs correctly
-const getImageUrl = (image) => {
-  if (!image) return "";
-  try {
-    if (image.startsWith("http://") || image.startsWith("https://")) return image;
-    if (image.startsWith("/media/")) return new URL(image, API_BASE_URL).origin + image;
-    return `${new URL("/media/products/" + image, API_BASE_URL).href}`;
-  } catch {
-    return "";
-  }
-};
+// The getImageUrl helper is no longer needed.
+// The backend now provides the full Cloudinary URL.
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -92,7 +83,7 @@ const ProductList = () => {
                     }}
                   >
                     <img
-                      src={item.image_url}
+                      src={item.image}
                       alt={item.name}
                       crossOrigin="anonymous"
                       style={{

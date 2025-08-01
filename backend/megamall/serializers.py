@@ -5,15 +5,13 @@ from .models import Product, Category, GuestUser, ShippingAddress, Order, OrderI
 from .models import HireItem
 
 class ProductSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
-    category = serializers.CharField(source='category.name')
+    category = serializers.CharField(source='category.name', read_only=True)
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image_url', 'description', 'category']
-
-    def get_image_url(self, obj):
-        return obj.image.url if obj.image else None
+        fields = ['id', 'name', 'price', 'image', 'description', 'category']
+        # The 'image' field is now directly included.
+        # The 'image_url' SerializerMethodField is no longer needed.
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -57,7 +55,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product = serializers.StringRelatedField()  # Shows the product name
+    product = serializers.StringRelatedField()
 
     class Meta:
         model = OrderItem
@@ -72,14 +70,11 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ['id', 'shipping_address', 'payment_method', 'total_price', 'status', 'created_at', 'order_items']
 
 class HireItemSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
-
     class Meta:
         model = HireItem
-        fields = ['id', 'name', 'image_url', 'details', 'hire_price_per_hour', 'hire_price_per_day']
-
-    def get_image_url(self, obj):
-        return obj.image.url if obj.image else None
+        fields = ['id', 'name', 'image', 'details', 'hire_price_per_hour', 'hire_price_per_day']
+        # The 'image' field is now directly included.
+        # The 'image_url' SerializerMethodField is no longer needed.
 
 
 from rest_framework import serializers

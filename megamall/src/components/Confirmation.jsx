@@ -12,59 +12,59 @@ const Confirmation = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!paymentMethod) {
-    setError('Please select a payment method.');
-    return;
-  }
-
-  setLoading(true);
-  setError('');
-
-  try {
-    const orderResponse = await placeOrder({
-      cartItems,
-      shippingAddress,
-      user,
-      totalPrice,
-      paymentMethod,
-    });
-
-    let orderId;
-    if (typeof orderResponse === 'string') {
-      orderId = orderResponse;
-    } else if (typeof orderResponse === 'object' && orderResponse !== null) {
-      if (orderResponse.id) {
-        orderId = orderResponse.id;
-      } else if (orderResponse.orderId) {
-        orderId = orderResponse.orderId;
-      } else {
-        throw new Error(
-          `Invalid order response: expected 'id' or 'orderId' key in response object, got: ${JSON.stringify(orderResponse)}`
-        );
-      }
-    } else {
-      throw new Error(
-        `Invalid order response: expected a string or an object, got: ${JSON.stringify(orderResponse)}`
-      );
+    if (!paymentMethod) {
+      setError('Please select a payment method.');
+      return;
     }
 
-    clearCart();
+    setLoading(true);
+    setError('');
 
-    navigate('/payment-redirect', {
-      state: {
+    try {
+      const orderResponse = await placeOrder({
+        cartItems,
+        shippingAddress,
+        user,
+        totalPrice,
         paymentMethod,
-        orderId,
-        phoneNumber: shippingAddress?.phoneNumber || user?.phoneNumber || '',
-      },
-    });
-  } catch (err) {
-    console.error('Error placing order:', err);
-    setError(`Failed to place order: ${err.message || 'Unknown error'}`);
-  } finally {
-    setLoading(false);
-  }
+      });
+
+      let orderId;
+      if (typeof orderResponse === 'string') {
+        orderId = orderResponse;
+      } else if (typeof orderResponse === 'object' && orderResponse !== null) {
+        if (orderResponse.id) {
+          orderId = orderResponse.id;
+        } else if (orderResponse.orderId) {
+          orderId = orderResponse.orderId;
+        } else {
+          throw new Error(
+            `Invalid order response: expected 'id' or 'orderId' key in response object, got: ${JSON.stringify(orderResponse)}`
+          );
+        }
+      } else {
+        throw new Error(
+          `Invalid order response: expected a string or an object, got: ${JSON.stringify(orderResponse)}`
+        );
+      }
+
+      clearCart();
+
+      navigate('/payment-redirect', {
+        state: {
+          paymentMethod,
+          orderId,
+          phoneNumber: shippingAddress?.phoneNumber || user?.phoneNumber || '',
+        },
+      });
+    } catch (err) {
+      console.error('Error placing order:', err);
+      setError(`Failed to place order: ${err.message || 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
 
@@ -72,6 +72,8 @@ const Confirmation = () => {
     if (!shippingAddress) return null;
 
     if (shippingAddress.deliveryOption === 'pickup') {
+      // It's a good practice to fetch store details from the backend
+      // instead of hardcoding them here.
       const storeMap = {
         '9': 'Afya Business Plaza (Near Globe Roundabout)',
         '10': 'Ghale House (Behind The Clarion Hotel)',
@@ -136,7 +138,6 @@ const Confirmation = () => {
                     onChange={() => setPaymentMethod('tingg')}
                   />
                   <label className="form-check-label d-flex ml-2" htmlFor="payment-tingg">
-                    
                     Credit and debit cards and other mobile money services
                   </label>
                 </div>
@@ -151,7 +152,6 @@ const Confirmation = () => {
                     onChange={() => setPaymentMethod('mpesa')}
                   />
                   <label className="form-check-label d-flex ml-2" htmlFor="payment-mpesa">
-                    
                     Safaricom M-Pesa
                   </label>
                 </div>
