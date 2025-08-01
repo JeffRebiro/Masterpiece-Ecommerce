@@ -20,7 +20,7 @@ const PaymentRedirect = () => {
     const initiatePayment = async () => {
       try {
         if (paymentMethod === 'mpesa') {
-          await fetch(`/api/payment/mpesa/initiate/`, {
+          await fetch(`${apiUrl}payment/mpesa/initiate/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orderId }),

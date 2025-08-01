@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const ITEMS_PER_PAGE = 8;
 
 // Use your correct base API URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
 
 // Helper to build image URLs correctly
 const getImageUrl = (image) => {

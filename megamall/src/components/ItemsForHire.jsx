@@ -20,7 +20,7 @@ const ItemsForHire = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get(`${apiUrl}/api/hire-items/`)
+    axios.get(`${apiUrl}/hire-items/`)
       .then((response) => {
         console.log("Hire Items:", response.data);
         setHireItems(response.data);

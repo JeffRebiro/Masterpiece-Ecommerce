@@ -64,7 +64,7 @@ const Courier = () => {
 
         console.log("🚀 Sending payload to backend:", payload);
 
-        const response = await axios.post(`${API_BASE_URL}/api/courier/`, payload);
+        const response = await axios.post(`${API_BASE_URL}/courier/`, payload);
         alert(`Send order placed successfully! Tracking ID: ${response.data.id || 'N/A'}`);
       } catch (error) {
         console.error(error.response?.data || error.message);
@@ -92,7 +92,7 @@ const Courier = () => {
         };
 
         console.log("🚀 Sending receive payload:", payload);
-        const response = await axios.post(`${API_BASE_URL}/api/courier/`, payload);
+        const response = await axios.post(`${API_BASE_URL}/courier/`, payload);
 
         alert(`Receive request submitted successfully! Tracking ID: ${response.data.id || 'N/A'}`);
       } catch (error) {

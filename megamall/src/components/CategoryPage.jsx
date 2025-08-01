@@ -31,7 +31,7 @@ const CategoryPage = () => {
     setLoading(true);
 
     // Use env variable in API call
-    axios.get(`${API_BASE_URL}/api/products/?category=${categoryName}`)
+    axios.get(`${API_BASE_URL}/products/?category=${categoryName}`)
       .then((res) => {
         setProducts(res.data); // assume backend already filtered by slug
         setLoading(false);

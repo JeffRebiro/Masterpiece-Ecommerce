@@ -21,7 +21,7 @@ const SearchResults = () => {
 
   useEffect(() => {
     axios
-      .get(`${apiUrl}api/products/`)
+      .get(`${apiUrl}/products/`)
       .then((res) => {
         setAllProducts(res.data);
       })
