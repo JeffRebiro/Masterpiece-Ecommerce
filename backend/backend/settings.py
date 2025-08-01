@@ -143,6 +143,8 @@ REST_FRAMEWORK = {
     ),
 }
 
+MEDIA_URL = '/media/'
+
 AUTH_USER_MODEL = 'megamall.GuestUser'
 
 CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME')
