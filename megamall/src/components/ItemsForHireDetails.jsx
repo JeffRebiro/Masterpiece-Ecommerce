@@ -26,7 +26,7 @@ const ItemsForHireDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`${API_BASE_URL}/api/hire-items/${id}/`)
+      .get(`${API_BASE_URL}/hire-items/${id}/`)
       .then((res) => setItem(res.data))
       .catch((err) => console.error("Error fetching hire item:", err));
   }, [id]);

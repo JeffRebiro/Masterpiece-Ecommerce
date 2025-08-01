@@ -34,7 +34,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`${apiUrl}api/products/${id}/`)
+      .get(`${apiUrl}/products/${id}/`)
       .then((res) => {
         setProduct(res.data);
       })
