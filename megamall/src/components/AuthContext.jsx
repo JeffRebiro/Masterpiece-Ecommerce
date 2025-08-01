@@ -1,11 +1,12 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 
 const AuthContext = createContext();
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [jwtToken, setJwtToken] = useState(localStorage.getItem("token") || null);
+  const [jwtToken, setJwtToken] = useState(localStorage.getItem("access") || null);
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem("refresh") || null);
   const [mpesaAccessToken, setMpesaAccessToken] = useState(localStorage.getItem("mpesaAccessToken") || null);
   const [shippingAddress, setShippingAddress] = useState(
@@ -13,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   );
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile if token is available
+  // Fetch user profile using access token
   useEffect(() => {
     const fetchUser = async () => {
       if (!jwtToken) {
@@ -22,23 +23,23 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const response = await fetch(`${apiUrl}/user-profile/`, {
+        const res = await fetch(`${apiUrl}/user-profile/`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
             "Content-Type": "application/json",
           },
         });
 
-        if (response.status === 401 && refreshToken) {
-          await attemptTokenRefresh();
-          return;
+        if (res.status === 401 && refreshToken) {
+          await tryRefreshToken();
+        } else if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+        } else {
+          throw new Error("Unauthorized");
         }
-
-        if (!response.ok) throw new Error("Unauthorized");
-        const userData = await response.json();
-        setUser(userData);
-      } catch (error) {
-        console.error("Fetch user error:", error);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
         logout();
       } finally {
         setLoading(false);
@@ -48,8 +49,8 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, [jwtToken]);
 
-  // Refresh JWT token
-  const attemptTokenRefresh = async () => {
+  // Try to refresh access token
+  const tryRefreshToken = async () => {
     try {
       const res = await fetch(`${apiUrl}/token/refresh/`, {
         method: "POST",
@@ -57,56 +58,21 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ refresh: refreshToken }),
       });
 
-      if (!res.ok) throw new Error("Failed to refresh token");
+      if (!res.ok) {
+        throw new Error("Refresh token invalid");
+      }
 
       const data = await res.json();
-      localStorage.setItem("token", data.access);
-      setJwtToken(data.access);
-    } catch (error) {
-      console.error("Token refresh failed:", error);
+      if (data.access) {
+        localStorage.setItem("access", data.access);
+        setJwtToken(data.access);
+        return true;
+      }
+    } catch (err) {
+      console.error("Token refresh failed:", err);
       logout();
+      return false;
     }
-  };
-
-  const login = async (access, refresh = null) => {
-    logout(); // Clean up old state
-
-    localStorage.setItem("token", access);
-    setJwtToken(access);
-
-    if (refresh) {
-      localStorage.setItem("refresh", refresh);
-      setRefreshToken(refresh);
-    }
-
-    try {
-      const response = await fetch(`${apiUrl}/user-profile/`, {
-        headers: {
-          Authorization: `Bearer ${access}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch user after login");
-
-      const userData = await response.json();
-      setUser(userData);
-    } catch (error) {
-      console.error("Login: Failed to fetch user:", error);
-      logout();
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refresh");
-    localStorage.removeItem("mpesaAccessToken");
-    localStorage.removeItem("shippingAddress");
-    setUser(null);
-    setJwtToken(null);
-    setRefreshToken(null);
-    setMpesaAccessToken(null);
-    setShippingAddress(null);
   };
 
   const refreshMpesaAccessToken = async () => {
@@ -131,34 +97,60 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const login = (access, refresh = null) => {
+    localStorage.setItem("access", access);
+    if (refresh) {
+      localStorage.setItem("refresh", refresh);
+      setRefreshToken(refresh);
+    }
+    setJwtToken(access);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("mpesaAccessToken");
+    localStorage.removeItem("shippingAddress");
+    setUser(null);
+    setJwtToken(null);
+    setRefreshToken(null);
+    setMpesaAccessToken(null);
+    setShippingAddress(null);
+  };
+
   const placeOrder = async (orderData) => {
-    const response = await fetch(`${apiUrl}/orders/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(jwtToken && { Authorization: `Bearer ${jwtToken}` }),
-      },
-      body: JSON.stringify(orderData),
-    });
-
-    let data;
     try {
-      data = await response.json();
-    } catch (jsonError) {
-      const text = await response.text();
-      throw new Error(`Unexpected server response: ${text}`);
-    }
+      const response = await fetch(`${apiUrl}/orders/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(jwtToken && { Authorization: `Bearer ${jwtToken}` }),
+        },
+        body: JSON.stringify(orderData),
+      });
 
-    if (!response.ok) {
-      throw new Error(data.message || data.detail || "Failed to place order");
-    }
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        const text = await response.text();
+        throw new Error(`Unexpected server response: ${text}`);
+      }
 
-    if (typeof data === "string") {
-      return data;
-    } else if (data && (data.id || data.orderId)) {
-      return data.id || data.orderId;
-    } else {
-      throw new Error(`Expected an order ID string, but got: ${JSON.stringify(data)}`);
+      if (!response.ok) {
+        throw new Error(data.message || data.detail || "Failed to place order");
+      }
+
+      if (typeof data === "string") {
+        return data;
+      } else if (data && (data.id || data.orderId)) {
+        return data.id || data.orderId;
+      } else {
+        throw new Error(`Expected an order ID string, but got: ${JSON.stringify(data)}`);
+      }
+    } catch (err) {
+      console.error("Order placement failed:", err);
+      throw err;
     }
   };
 
