@@ -14,7 +14,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_image_url(self, obj):
         if obj.image:
-            return cloudinary.CloudinaryImage(obj.image.name).build_url(secure=True)
+            return cloudinary.CloudinaryImage(obj.image.public_id).build_url(secure=True)
         return None
 
 
@@ -85,7 +85,7 @@ class HireItemSerializer(serializers.ModelSerializer):
 
     def get_image_url(self, obj):
         if obj.image:
-            return cloudinary.CloudinaryImage(obj.image.name).build_url(secure=True)
+            return cloudinary.CloudinaryImage(obj.image.public_id).build_url(secure=True)
         return None
 
 
