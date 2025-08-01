@@ -72,8 +72,6 @@ const Confirmation = () => {
     if (!shippingAddress) return null;
 
     if (shippingAddress.deliveryOption === 'pickup') {
-      // It's a good practice to fetch store details from the backend
-      // instead of hardcoding them here.
       const storeMap = {
         '9': 'Afya Business Plaza (Near Globe Roundabout)',
         '10': 'Ghale House (Behind The Clarion Hotel)',
@@ -122,7 +120,6 @@ const Confirmation = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="row">
-          {/* Left Column */}
           <div className="col-lg-8">
             <div className="card checkout-preview-card mb-4">
               <div className="card-body">
@@ -174,15 +171,15 @@ const Confirmation = () => {
                     <div className="col-md-7 d-flex">
                       <img
                         src={item.product_image_url}
-                        alt={item.name}
+                        alt={item.product}
                         className="img-thumbnail mr-2"
                         style={{ width: '70px' }}
                       />
-                      <h5>{item.name}</h5>
+                      <h5>{item.product}</h5>
                     </div>
                     <div className="col-md-2 text-right">{item.quantity}</div>
                     <div className="col-md-3 text-right">
-                      KES {item.price * item.quantity}
+                      KES {(item.price * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 ))}
@@ -209,7 +206,6 @@ const Confirmation = () => {
             </div>
           </div>
 
-          {/* Right Column */}
           <div className="col-lg-4">
             <div className="card checkout-preview-card mb-4">
               <div className="checkout-preview-card-actions">

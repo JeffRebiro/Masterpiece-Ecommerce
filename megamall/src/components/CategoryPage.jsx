@@ -5,10 +5,7 @@ import axios from "axios";
 // Use environment variable for base API URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
 
-// This helper is no longer needed since the backend now returns the full Cloudinary URL.
-// The image URL will be directly available on the `product` object as `item.image`.
-
-// Converts slug to readable name
+// This helper function is no longer needed
 const slugToCategoryName = (slug) => {
   return slug
     .split("-")
@@ -17,7 +14,7 @@ const slugToCategoryName = (slug) => {
 };
 
 const CategoryPage = () => {
-  const { categoryName } = useParams(); // this is the slug, like 'printing-services'
+  const { categoryName } = useParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,10 +23,9 @@ const CategoryPage = () => {
   useEffect(() => {
     setLoading(true);
 
-    // Use env variable in API call
     axios.get(`${API_BASE_URL}/products/?category=${categoryName}`)
       .then((res) => {
-        setProducts(res.data); // assume backend already filtered by slug
+        setProducts(res.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -62,7 +58,7 @@ const CategoryPage = () => {
                         border: "1px solid #ddd"
                       }}>
                         <img
-                          src={item.image_url} // Use image_url
+                          src={item.image_url}
                           alt={item.name}
                           style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
                         />

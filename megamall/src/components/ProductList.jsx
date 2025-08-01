@@ -83,7 +83,7 @@ const ProductList = () => {
                     }}
                   >
                     <img
-                      src={item.image}
+                      src={item.image_url} // Use the new image_url field
                       alt={item.name}
                       crossOrigin="anonymous"
                       style={{

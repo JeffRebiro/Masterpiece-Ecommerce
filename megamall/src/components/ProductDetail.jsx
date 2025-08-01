@@ -40,7 +40,7 @@ const ProductDetail = () => {
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image_url, // Use image_url
+        image: product.image_url,
         quantity,
       }];
     }
@@ -74,7 +74,7 @@ const ProductDetail = () => {
                 borderRadius: "12px", border: "1px solid #ddd", backgroundColor: "#f9f9f9"
               }}>
                 <img
-                  src={product.image_url} 
+                  src={product.image_url}
                   alt={product.name}
                   loading="lazy"
                   style={{

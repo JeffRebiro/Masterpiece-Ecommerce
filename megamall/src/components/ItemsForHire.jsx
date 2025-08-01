@@ -3,12 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 8;
-
-// ✅ Get API base URL from environment variable
 const apiUrl = import.meta.env.VITE_API_URL;
-
-// Helper function to build correct image URL is no longer needed
-// The backend now provides the full Cloudinary URL.
 
 const ItemsForHire = () => {
   const [hireItems, setHireItems] = useState([]);
@@ -17,7 +12,6 @@ const ItemsForHire = () => {
   useEffect(() => {
     axios.get(`${apiUrl}/hire-items/`)
       .then((response) => {
-        console.log("Hire Items:", response.data);
         setHireItems(response.data);
       })
       .catch((error) => {
@@ -53,7 +47,6 @@ const ItemsForHire = () => {
                       <li><Link to={`/hire-item/${item.id}`}></Link></li>
                     </ul>
                   </div>
-
                   <div style={{
                     width: "100%",
                     height: "390px",
@@ -66,7 +59,7 @@ const ItemsForHire = () => {
                     backgroundColor: "#f9f9f9"
                   }}>
                     <img
-                      src={item.image_url} // Use image_url
+                      src={item.image_url}
                       alt={item.name}
                       crossOrigin="anonymous"
                       style={{
@@ -77,18 +70,11 @@ const ItemsForHire = () => {
                     />
                   </div>
                 </div>
-
                 <div className="down-content">
-                  <h4 style={{ color: "black", fontWeight: "bold" }}>
-                    <Link
-                      to={`/hire-item/${item.id}`}
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      {item.name || "Unnamed Item"}
-                    </Link>
+                  <h4>
+                    <Link to={`/hire-item/${item.id}`}>{item.name}</Link>
                   </h4>
-                  <span>Ksh. {item.hire_price_per_hour}/hr</span><br />
-                  <span>Ksh. {item.hire_price_per_day}/day</span>
+                  <span>Hour: Ksh. {item.hire_price_per_hour} | Day: Ksh. {item.hire_price_per_day}</span>
                 </div>
               </div>
             </div>
@@ -96,42 +82,25 @@ const ItemsForHire = () => {
         </div>
 
         {/* Pagination */}
-        <div className="d-flex justify-content-center mt-4">
-          <nav>
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                >
-                  Previous
-                </button>
-              </li>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .slice(currentPage - 1, currentPage + 3)
-                .map((page) => (
-                  <li
-                    key={page}
-                    className={`page-item ${currentPage === page ? "active" : ""}`}
-                  >
-                    <button className="page-link" onClick={() => setCurrentPage(page)}>
-                      {page}
-                    </button>
+        {totalPages > 1 && (
+          <div className="row">
+            <div className="col-lg-12">
+              <ul className="pagination">
+                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                  <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(currentPage - 1); }}>Previous</a>
+                </li>
+                {[...Array(totalPages)].map((_, index) => (
+                  <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`} key={index}>
+                    <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(index + 1); }}>{index + 1}</a>
                   </li>
                 ))}
-
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
+                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                  <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(currentPage + 1); }}>Next</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

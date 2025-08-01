@@ -6,8 +6,7 @@ import { CartContext } from "../components/CartContext";
 // Use VITE_API_URL for backend API
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-// This helper is no longer needed since the backend now returns the full Cloudinary URL
-// directly in the `image` field.
+// The getImageUrl helper is no longer needed since the backend now returns the full Cloudinary URL directly in the `image_url` field.
 const ItemsForHireDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
