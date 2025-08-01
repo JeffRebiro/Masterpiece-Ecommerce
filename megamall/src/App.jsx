@@ -64,6 +64,7 @@ function AppContent() {
           <Route path="/category/:categoryName" element={<CategoryPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/checkout/shipping-address/" element={<ShippingAddress />} />
+          <Route path="/checkout/confirmation/" element={<Confirmation />} />
           <Route path="/checkout/confirmation/:itemType/:id" element={<Confirmation />} />
           <Route path="/courier/" element={<Courier />} />
           <Route path="/payment-redirect" element={<PaymentRedirect />} />

@@ -8,12 +8,22 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
 
 const Confirmation = () => {
-    const [item, setItem] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const { orderConfirmed, setOrderConfirmed } = useCart();
-    const { isLoggedIn, authToken } = useAuth();
+    // Cart-related state and context
+    const { cartItems, totalPrice, clearCart, setOrderConfirmed } = useCart();
+    const { user, shippingAddress, placeOrder, isLoggedIn, authToken } = useAuth();
+
+    // Single-item state
+    const [singleItem, setSingleItem] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Checkout form state
+    const [paymentMethod, setPaymentMethod] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { itemType, id } = useParams(); // Get both itemType and id from URL
+
+    // URL parameters to check for single-item confirmation
+    const { itemType, id } = useParams();
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -21,101 +31,282 @@ const Confirmation = () => {
             return;
         }
 
-        if (!orderConfirmed || !itemType || !id) {
-            // Redirect to home or another page if confirmation state is not set
-            // and the itemType or id is missing
-            navigate('/');
-            return;
-        }
-
+        // This useEffect runs only for single-item confirmations
         const fetchItem = async () => {
-            try {
-                let endpoint = '';
-                if (itemType === 'product') {
-                    endpoint = `${API_BASE_URL}/products/${id}/`;
-                } else if (itemType === 'hire-item') {
-                    endpoint = `${API_BASE_URL}/hire-items/${id}/`;
-                } else {
-                    console.error("Invalid item type");
-                    navigate('/');
-                    return;
-                }
+            if (itemType && id) {
+                setIsLoading(true);
+                try {
+                    let endpoint = '';
+                    if (itemType === 'product') {
+                        endpoint = `${API_BASE_URL}/products/${id}/`;
+                    } else if (itemType === 'hire-item') {
+                        endpoint = `${API_BASE_URL}/hire-items/${id}/`;
+                    } else {
+                        console.error("Invalid item type");
+                        navigate('/');
+                        return;
+                    }
 
-                const response = await axios.get(endpoint, {
-                    headers: {
-                        Authorization: `Token ${authToken}`,
-                    },
-                });
-                setItem(response.data);
-            } catch (error) {
-                console.error("Error fetching item:", error);
-                navigate('/');
-            } finally {
-                setIsLoading(false);
+                    const response = await axios.get(endpoint, {
+                        headers: {
+                            Authorization: `Token ${authToken}`,
+                        },
+                    });
+                    setSingleItem(response.data);
+                } catch (err) {
+                    console.error("Error fetching item:", err);
+                    navigate('/');
+                } finally {
+                    setIsLoading(false);
+                }
             }
         };
 
         fetchItem();
 
-        // Clear the confirmation state after component loads
-        setOrderConfirmed(false);
-
-    }, [isLoggedIn, orderConfirmed, itemType, id, authToken, navigate, setOrderConfirmed]);
-
-    if (isLoading) {
-        return <div className="text-center my-5">Loading...</div>;
-    }
-
-    if (!item) {
-        return <div className="text-center my-5">Item not found or an error occurred.</div>;
-    }
-
-    // Conditional rendering based on item type
-    const renderConfirmationDetails = () => {
-        if (itemType === 'product') {
-            return (
-                <div className="card-body text-center">
-                    <h5 className="card-title">Thank you for your purchase!</h5>
-                    <p className="card-text">Your order for {item.name} has been placed successfully.</p>
-                    <p className="card-text">Total amount: Ksh. {item.price}</p>
-                </div>
-            );
-        } else if (itemType === 'hire-item') {
-            return (
-                <div className="card-body text-center">
-                    <h5 className="card-title">Thank you for your hire request!</h5>
-                    <p className="card-text">Your request to hire {item.name} has been sent successfully.</p>
-                    <p className="card-text">You will be contacted shortly to confirm the rental details.</p>
-                    <p className="card-text">Daily Hire Price: Ksh. {item.hire_price_per_day}</p>
-                    <p className="card-text">Hourly Hire Price: Ksh. {item.hire_price_per_hour}</p>
-                </div>
-            );
+        // No need to clear cart for single-item confirmation
+        if (!itemType) {
+            setOrderConfirmed(true);
         }
-        return null;
+
+    }, [isLoggedIn, itemType, id, authToken, navigate, setOrderConfirmed]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!paymentMethod) {
+            setError('Please select a payment method.');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const orderResponse = await placeOrder({
+                cartItems,
+                shippingAddress,
+                user,
+                totalPrice,
+                paymentMethod,
+            });
+
+            let orderId;
+            if (typeof orderResponse === 'string') {
+                orderId = orderResponse;
+            } else if (typeof orderResponse === 'object' && orderResponse !== null) {
+                if (orderResponse.id) {
+                    orderId = orderResponse.id;
+                } else if (orderResponse.orderId) {
+                    orderId = orderResponse.orderId;
+                } else {
+                    throw new Error(`Invalid order response: expected 'id' or 'orderId' key in response object, got: ${JSON.stringify(orderResponse)}`);
+                }
+            } else {
+                throw new Error(`Invalid order response: expected a string or an object, got: ${JSON.stringify(orderResponse)}`);
+            }
+
+            clearCart();
+            setOrderConfirmed(false); // Clear cart confirmation state
+
+            navigate('/payment-redirect', {
+                state: {
+                    paymentMethod,
+                    orderId,
+                    phoneNumber: shippingAddress?.phoneNumber || user?.phoneNumber || '',
+                },
+            });
+        } catch (err) {
+            console.error('Error placing order:', err);
+            setError(`Failed to place order: ${err.message || 'Unknown error'}`);
+        } finally {
+            setLoading(false);
+        }
     };
 
+
+  const renderDeliveryInfo = () => {
+    if (!shippingAddress) return null;
+
+    if (shippingAddress.deliveryOption === 'pickup') {
+      const storeMap = {
+        '9': 'Afya Business Plaza (Near Globe Roundabout)',
+        '10': 'Ghale House (Behind The Clarion Hotel)',
+      };
+
+      return (
+        <>
+          <h3>Pickup from</h3>
+          <p>{storeMap[shippingAddress.storeId]}</p>
+          <h4>Contact</h4>
+          <p>
+            Name: {shippingAddress.firstName} <br />
+            Phone: {shippingAddress.phoneNumber} <br />
+            Email: {user?.email}
+          </p>
+        </>
+      );
+    }
+
     return (
-        <div className="container mt-5">
-            <div className="row justify-content-center">
-                <div className="col-md-8">
-                    <div className="card">
-                        <div className="card-header bg-success text-white text-center">
-                            Order Confirmed
-                        </div>
-                        {renderConfirmationDetails()}
-                        <div className="card-footer text-center">
-                            <button
-                                className="btn btn-primary"
-                                onClick={() => navigate('/')}
-                            >
-                                Continue Shopping
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <>
+        <h3>Deliver to</h3>
+        <p>
+          {shippingAddress.street}, {shippingAddress.city}
+        </p>
+        <h4>Contact</h4>
+        <p>
+          Name: {shippingAddress.firstName} <br />
+          Phone: {shippingAddress.phoneNumber} <br />
+          Email: {user?.email}
+        </p>
+      </>
     );
+  };
+
+  return (
+    <div className="container mt-4">
+      <nav className="nav checkout-nav mb-4">
+        <a href="/checkout/shipping-address/" className="nav-link step1 visited">
+          1. Delivery address
+        </a>
+        <a href="/checkout/confirmation/" className="nav-link step2 active">
+          2. Confirmation
+        </a>
+      </nav>
+
+      <form onSubmit={handleSubmit}>
+        <div className="row">
+          <div className="col-lg-8">
+            <div className="card checkout-preview-card mb-4">
+              <div className="card-body">
+                <h3>Pay with</h3>
+
+                <div className="form-check d-flex align-items-center mb-3">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    id="payment-tingg"
+                    value="tingg"
+                    checked={paymentMethod === 'tingg'}
+                    onChange={() => setPaymentMethod('tingg')}
+                  />
+                  <label className="form-check-label d-flex ml-2" htmlFor="payment-tingg">
+                    Credit and debit cards and other mobile money services
+                  </label>
+                </div>
+
+                <div className="form-check d-flex align-items-center">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    id="payment-mpesa"
+                    value="mpesa"
+                    checked={paymentMethod === 'mpesa'}
+                    onChange={() => setPaymentMethod('mpesa')}
+                  />
+                  <label className="form-check-label d-flex ml-2" htmlFor="payment-mpesa">
+                    Safaricom M-Pesa
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="card checkout-preview-card">
+              <div className="checkout-preview-card-actions">
+                <a href="/basket/" className="btn btn-link d-flex" title="Edit order contents">
+                  <small className="ml-1">Edit</small>
+                </a>
+              </div>
+              <div className="card-body">
+                <h2>Order contents</h2>
+                {cartItems.map((item) => (
+                  <div
+                    className="basket-line row py-2 align-items-center"
+                    key={item.id}
+                  >
+                    <div className="col-md-7 d-flex">
+                      <img
+                        src={item.product_image_url}
+                        alt={item.product}
+                        className="img-thumbnail mr-2"
+                        style={{ width: '70px' }}
+                      />
+                      <h5>{item.product}</h5>
+                    </div>
+                    <div className="col-md-2 text-right">{item.quantity}</div>
+                    <div className="col-md-3 text-right">
+                      KES {(item.price * item.quantity).toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+                <hr />
+                <table className="table table-bordered table-sm mt-3">
+                  <tbody>
+                    <tr>
+                      <th>Basket total</th>
+                      <td>KES {totalPrice}</td>
+                    </tr>
+                    <tr>
+                      <th>Delivery</th>
+                      <td>KES 0</td>
+                    </tr>
+                    <tr className="table-success">
+                      <th>Order total</th>
+                      <td>
+                        <strong>KES {totalPrice}</strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-lg-4">
+            <div className="card checkout-preview-card mb-4">
+              <div className="checkout-preview-card-actions">
+                <a
+                  href="/checkout/shipping-address/"
+                  className="btn btn-link d-flex"
+                  title="Change delivery address"
+                >
+                  <small className="ml-1">Edit</small>
+                </a>
+              </div>
+              <div className="card-body">{renderDeliveryInfo()}</div>
+            </div>
+
+            <div className="card checkout-preview-card">
+              <div className="card-body">
+                <h3>Place order</h3>
+                <p className="lead">Your order total is KES {totalPrice}</p>
+                <p className="checkout-terms">
+                  By placing an order you agree to the{' '}
+                  <a
+                    href="/terms-and-conditions/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    terms and conditions
+                  </a>
+                  .
+                </p>
+                {error && <p className="text-danger">{error}</p>}
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-lg btn-block"
+                  disabled={!paymentMethod || loading}
+                >
+                  {loading ? 'Placing order...' : 'Place order'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
 };
 
 export default Confirmation;
