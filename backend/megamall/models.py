@@ -74,7 +74,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    image = CloudinaryField('image')
+    image = CloudinaryField('image', folder='products')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     description = models.TextField()
 
@@ -154,7 +154,7 @@ class OrderItem(models.Model):
 
 class HireItem(models.Model):
     name = models.CharField(max_length=255)
-    image = CloudinaryField('image')
+    image = CloudinaryField('image', folder='hire-items')
     details = models.TextField(blank=True)
     hire_price_per_hour = models.DecimalField(max_digits=10, decimal_places=2)
     hire_price_per_day = models.DecimalField(max_digits=10, decimal_places=2)
