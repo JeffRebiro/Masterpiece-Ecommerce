@@ -2,22 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const ITEMS_PER_PAGE = 8;
+const productS_PER_PAGE = 8;
 
 // Use your correct base API URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/";
 
-// Helper to build image URLs correctly
-const getImageUrl = (image) => {
-  if (!image) return "";
-  try {
-    if (image.startsWith("http://") || image.startsWith("https://")) return image;
-    if (image.startsWith("/media/")) return new URL(image, API_BASE_URL).origin + image;
-    return `${new URL("/media/products/" + image, API_BASE_URL).href}`;
-  } catch {
-    return "";
-  }
-};
+// The getImageUrl helper function is no longer needed.
+// The backend now sends the complete Cloudinary URL.
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -33,9 +24,9 @@ const ProductList = () => {
       });
   }, []);
 
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentProducts = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * productS_PER_PAGE;
+  const currentProducts = products.slice(startIndex, startIndex + productS_PER_PAGE);
+  const totalPages = Math.ceil(products.length / productS_PER_PAGE);
 
   return (
     <section className="section" id="men">
@@ -54,24 +45,24 @@ const ProductList = () => {
 
         {/* Products */}
         <div className="row">
-          {currentProducts.map((item) => (
-            <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={item.id}>
-              <div className="item">
+          {currentProducts.map((product) => (
+            <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={product.id}>
+              <div className="product">
                 <div className="thumb position-relative">
                   <div className="hover-content">
                     <ul>
                       <li>
-                        <Link to={`/product/${item.id}`}>
+                        <Link to={`/product/${product.id}`}>
                           <i className="fa fa-eye"></i>
                         </Link>
                       </li>
                       <li>
-                        <Link to={`/product/${item.id}`}>
+                        <Link to={`/product/${product.id}`}>
                           <i className="fa fa-star"></i>
                         </Link>
                       </li>
                       <li>
-                        <Link to={`/product/${item.id}`}>
+                        <Link to={`/product/${product.id}`}>
                           <i className="fa fa-shopping-cart"></i>
                         </Link>
                       </li>
@@ -83,7 +74,7 @@ const ProductList = () => {
                       width: "100%",
                       height: "390px",
                       display: "flex",
-                      alignItems: "center",
+                      alignproducts: "center",
                       justifyContent: "center",
                       overflow: "hidden",
                       borderRadius: "12px",
@@ -92,8 +83,9 @@ const ProductList = () => {
                     }}
                   >
                     <img
-                      src={getImageUrl(item.image)}
-                      alt={item.name}
+                      // The fix is here: Use product.image directly
+                      src={product.image}
+                      alt={product.name}
                       crossOrigin="anonymous"
                       style={{
                         maxWidth: "100%",
@@ -107,13 +99,13 @@ const ProductList = () => {
                 <div className="down-content">
                   <h4 style={{ color: "black", fontWeight: "bold" }}>
                     <Link
-                      to={`/product/${item.id}`}
+                      to={`/product/${product.id}`}
                       style={{ textDecoration: "none", color: "inherit" }}
                     >
-                      {item.name || "No name"}
+                      {product.name || "No name"}
                     </Link>
                   </h4>
-                  <span>Ksh. {item.price}</span>
+                  <span>Ksh. {product.price}</span>
                 </div>
               </div>
             </div>
@@ -125,7 +117,7 @@ const ProductList = () => {
           <div className="d-flex justify-content-center mt-4">
             <nav>
               <ul className="pagination">
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <li className={`page-product ${currentPage === 1 ? "disabled" : ""}`}>
                   <button
                     className="page-link"
                     onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -142,7 +134,7 @@ const ProductList = () => {
                   .map((page) => (
                     <li
                       key={page}
-                      className={`page-item ${currentPage === page ? "active" : ""}`}
+                      className={`page-product ${currentPage === page ? "active" : ""}`}
                     >
                       <button className="page-link" onClick={() => setCurrentPage(page)}>
                         {page}
@@ -150,7 +142,7 @@ const ProductList = () => {
                     </li>
                   ))}
 
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <li className={`page-product ${currentPage === totalPages ? "disabled" : ""}`}>
                   <button
                     className="page-link"
                     onClick={() =>
