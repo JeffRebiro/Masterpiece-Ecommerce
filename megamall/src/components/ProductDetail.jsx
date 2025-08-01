@@ -89,7 +89,7 @@ const ProductDetail = () => {
                 borderRadius: "12px", border: "1px solid #ddd", backgroundColor: "#f9f9f9"
               }}>
                 <img
-                  src={product.image_url}
+                  src={item.image_url}
                   alt={product.name}
                   loading="lazy"
                   style={{
