@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext'; // Assuming this provides the 'login' function
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -25,7 +27,7 @@ const Login = () => {
     setNewCustomerLoading(true);
 
     try {
-      const response = await fetch(`${apiUrl}guest-users/`, {
+      const response = await fetch(`${apiUrl}/guest-users/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
