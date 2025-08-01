@@ -22,6 +22,7 @@ import certifi
 import ssl
 import urllib.request
 
+from io import BytesIO
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import get_template
@@ -146,7 +147,7 @@ def user_profile(request):
         return Response({"detail": "Failed to retrieve profile."}, status=500)
 
 
-def generate_invoice_pdf(order, filename="invoice.pdf"):
+def generate_invoice_pdf_in_memory(order):
     template = get_template("invoice_template.html")
     context = {
         "order": order,
@@ -155,18 +156,15 @@ def generate_invoice_pdf(order, filename="invoice.pdf"):
         "shipping_address": order.shipping_address,
     }
     html = template.render(context)
-    filepath = os.path.join(settings.MEDIA_ROOT, filename)
+    result = BytesIO()
+    pisa_status = pisa.CreatePDF(html, dest=result)
+    if pisa_status.err:
+        print("Error rendering PDF:", pisa_status.err)
+        print(html)
+        return None
+    return result.getvalue()
 
-    with open(filepath, "wb") as f:
-        pisa_status = pisa.CreatePDF(html, dest=f)
-        if pisa_status.err:
-            print("Error rendering PDF:", pisa_status.err)
-            print(html)
-
-    return filepath
-
-
-def send_invoice_email(user_email, invoice_context, pdf_path):
+def send_invoice_email_in_memory(user_email, invoice_context, pdf_bytes):
     subject = f"Invoice #{invoice_context['invoice_number']} - MegaMall"
     html_content = f"""
         <h2>Thank you for your order</h2>
@@ -174,10 +172,7 @@ def send_invoice_email(user_email, invoice_context, pdf_path):
         <p>See attached invoice PDF.</p>
     """
 
-    with open(pdf_path, "rb") as f:
-        data = f.read()
-        encoded_file = base64.b64encode(data).decode()
-
+    encoded_file = base64.b64encode(pdf_bytes).decode()
     attachment = Attachment(
         FileContent(encoded_file),
         FileName(f"invoice_{invoice_context['invoice_number']}.pdf"),
@@ -198,8 +193,9 @@ def send_invoice_email(user_email, invoice_context, pdf_path):
     sg.send(message)
 
 
+
 @api_view(["POST"])
-@permission_classes([permissions.AllowAny])
+@permission_classes([AllowAny])
 def create_order(request):
     data = request.data
     shipping_data = data.get("shippingAddress")
@@ -216,9 +212,7 @@ def create_order(request):
     else:
         user_email_for_invoice = shipping_data.get("email") or data.get("guest_email")
 
-    if not all(
-        [shipping_data, cart_items, total_price, payment_method, user_email_for_invoice]
-    ):
+    if not all([shipping_data, cart_items, total_price, payment_method, user_email_for_invoice]):
         return JsonResponse(
             {"detail": "Incomplete order data. Email for invoice is required."},
             status=400,
@@ -228,10 +222,7 @@ def create_order(request):
         shipping_serializer = ShippingAddressSerializer(data=shipping_data)
         if not shipping_serializer.is_valid():
             return JsonResponse(
-                {
-                    "detail": "Invalid shipping address.",
-                    "errors": shipping_serializer.errors,
-                },
+                {"detail": "Invalid shipping address.", "errors": shipping_serializer.errors},
                 status=400,
             )
         shipping_address = shipping_serializer.save()
@@ -248,10 +239,13 @@ def create_order(request):
             product = get_object_or_404(Product, id=item.get("id"))
             quantity = item.get("quantity", 1)
             OrderItem.objects.create(
-                order=order, product=product, quantity=quantity, price=product.price
+                order=order,
+                product=product,
+                quantity=quantity,
+                price=product.price,
             )
 
-        context = {
+        invoice_context = {
             "invoice_number": order.id,
             "items": order.order_items.all(),
             "subtotal": order.total_price,
@@ -261,8 +255,10 @@ def create_order(request):
             "shipping_address": shipping_address,
         }
 
-        pdf_path = generate_invoice_pdf(order, f"invoice_{order.id}.pdf")
-        send_invoice_email(user_email_for_invoice, context, pdf_path)
+        # Use in-memory PDF generation
+        pdf_bytes = generate_invoice_pdf_in_memory(order)
+        if pdf_bytes:
+            send_invoice_email_in_memory(user_email_for_invoice, invoice_context, pdf_bytes)
 
         return JsonResponse(
             {"orderId": str(order.id), "message": "Order placed and invoice sent."},
