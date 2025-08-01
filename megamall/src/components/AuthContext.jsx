@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const placeOrder = async (orderData) => {
-    const response = await fetch(`${apiUrl}orders/`, {
+    const response = await fetch(`${apiUrl}/orders/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
