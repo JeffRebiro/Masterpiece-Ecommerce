@@ -25,8 +25,26 @@ export const CartProvider = ({ children }) => {
 
   // Compute total price
   const totalPrice = useMemo(() => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return cartItems.reduce((sum, item) => {
+      const isHire =
+        "hire_price_per_day" in item || "hire_price_per_hour" in item;
+
+      if (isHire) {
+        const duration = item.duration || 1;
+        const durationType = item.durationType || "day";
+        const rate =
+          durationType === "hour"
+            ? item.hire_price_per_hour || 0
+            : item.hire_price_per_day || 0;
+        return sum + duration * rate;
+      } else {
+        const price = item.price || 0;
+        const quantity = item.quantity || 1;
+        return sum + price * quantity;
+      }
+    }, 0);
   }, [cartItems]);
+
 
   // Add or update cart item
   const addToCart = (product, quantity = 1) => {

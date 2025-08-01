@@ -12,59 +12,59 @@ const Confirmation = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!paymentMethod) {
-    setError('Please select a payment method.');
-    return;
-  }
-
-  setLoading(true);
-  setError('');
-
-  try {
-    const orderResponse = await placeOrder({
-      cartItems,
-      shippingAddress,
-      user,
-      totalPrice,
-      paymentMethod,
-    });
-
-    let orderId;
-    if (typeof orderResponse === 'string') {
-      orderId = orderResponse;
-    } else if (typeof orderResponse === 'object' && orderResponse !== null) {
-      if (orderResponse.id) {
-        orderId = orderResponse.id;
-      } else if (orderResponse.orderId) {
-        orderId = orderResponse.orderId;
-      } else {
-        throw new Error(
-          `Invalid order response: expected 'id' or 'orderId' key in response object, got: ${JSON.stringify(orderResponse)}`
-        );
-      }
-    } else {
-      throw new Error(
-        `Invalid order response: expected a string or an object, got: ${JSON.stringify(orderResponse)}`
-      );
+    if (!paymentMethod) {
+      setError('Please select a payment method.');
+      return;
     }
 
-    clearCart();
+    setLoading(true);
+    setError('');
 
-    navigate('/payment-redirect', {
-      state: {
+    try {
+      const orderResponse = await placeOrder({
+        cartItems,
+        shippingAddress,
+        user,
+        totalPrice,
         paymentMethod,
-        orderId,
-        phoneNumber: shippingAddress?.phoneNumber || user?.phoneNumber || '',
-      },
-    });
-  } catch (err) {
-    console.error('Error placing order:', err);
-    setError(`Failed to place order: ${err.message || 'Unknown error'}`);
-  } finally {
-    setLoading(false);
-  }
+      });
+
+      let orderId;
+      if (typeof orderResponse === 'string') {
+        orderId = orderResponse;
+      } else if (typeof orderResponse === 'object' && orderResponse !== null) {
+        if (orderResponse.id) {
+          orderId = orderResponse.id;
+        } else if (orderResponse.orderId) {
+          orderId = orderResponse.orderId;
+        } else {
+          throw new Error(
+            `Invalid order response: expected 'id' or 'orderId' key in response object, got: ${JSON.stringify(orderResponse)}`
+          );
+        }
+      } else {
+        throw new Error(
+          `Invalid order response: expected a string or an object, got: ${JSON.stringify(orderResponse)}`
+        );
+      }
+
+      clearCart();
+
+      navigate('/payment-redirect', {
+        state: {
+          paymentMethod,
+          orderId,
+          phoneNumber: shippingAddress?.phoneNumber || user?.phoneNumber || '',
+        },
+      });
+    } catch (err) {
+      console.error('Error placing order:', err);
+      setError(`Failed to place order: ${err.message || 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
 
@@ -136,7 +136,7 @@ const Confirmation = () => {
                     onChange={() => setPaymentMethod('tingg')}
                   />
                   <label className="form-check-label d-flex ml-2" htmlFor="payment-tingg">
-                    
+
                     Credit and debit cards and other mobile money services
                   </label>
                 </div>
@@ -151,7 +151,7 @@ const Confirmation = () => {
                     onChange={() => setPaymentMethod('mpesa')}
                   />
                   <label className="form-check-label d-flex ml-2" htmlFor="payment-mpesa">
-                    
+
                     Safaricom M-Pesa
                   </label>
                 </div>
@@ -166,26 +166,50 @@ const Confirmation = () => {
               </div>
               <div className="card-body">
                 <h2>Order contents</h2>
-                {cartItems.map((item) => (
-                  <div
-                    className="basket-line row py-2 align-items-center"
-                    key={item.id}
-                  >
-                    <div className="col-md-7 d-flex">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="img-thumbnail mr-2"
-                        style={{ width: '70px' }}
-                      />
-                      <h5>{item.name}</h5>
+                {cartItems.map((item) => {
+                  const isHireItem =
+                    "hire_price_per_day" in item || "hire_price_per_hour" in item;
+
+                  const name = item.name;
+                  const image = item.image;
+                  let quantityDisplay;
+                  let itemTotal = 0;
+
+                  if (isHireItem) {
+                    const duration = item.duration || 1;
+                    const durationType = item.durationType || "day";
+
+                    const rate =
+                      durationType === "hour"
+                        ? item.hire_price_per_hour || 0
+                        : item.hire_price_per_day || 0;
+
+                    itemTotal = duration * rate;
+                    quantityDisplay = `${duration} ${durationType}(s)`;
+                  } else {
+                    const quantity = item.quantity || 1;
+                    const price = item.price || 0;
+                    itemTotal = price * quantity;
+                    quantityDisplay = quantity;
+                  }
+
+                  return (
+                    <div className="basket-line row py-2 align-items-center" key={item.id}>
+                      <div className="col-md-7 d-flex">
+                        <img
+                          src={image}
+                          alt={name}
+                          className="img-thumbnail mr-2"
+                          style={{ width: "70px" }}
+                        />
+                        <h5>{name}</h5>
+                      </div>
+                      <div className="col-md-2 text-right">{quantityDisplay}</div>
+                      <div className="col-md-3 text-right">KES {itemTotal}</div>
                     </div>
-                    <div className="col-md-2 text-right">{item.quantity}</div>
-                    <div className="col-md-3 text-right">
-                      KES {item.price * item.quantity}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
+
                 <hr />
                 <table className="table table-bordered table-sm mt-3">
                   <tbody>
