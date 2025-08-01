@@ -6,8 +6,13 @@ import { CartContext } from "../components/CartContext";
 // Use VITE_API_URL for backend API
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-// The getImageUrl helper is no longer needed.
-// The backend now provides the full Cloudinary URL.
+// Only use full backend URL for /media/ images
+const getImageUrl = (image) => {
+  if (!image) return "";
+  if (image.startsWith("http://") || image.startsWith("https://")) return image;
+  if (image.startsWith("/media/")) return `${API_BASE_URL}${image}`;
+  return `/src/assets/images/${image}`; // Use Vite-relative local path
+};
 
 const ItemsForHireDetails = () => {
   const { id } = useParams();
@@ -67,7 +72,7 @@ const ItemsForHireDetails = () => {
     setShowPopup(true);
   };
 
-  const handleContinueBrowse = () => {
+  const handleContinueBrowsing = () => {
     setShowPopup(false);
     navigate("/hire-items");
   };
@@ -100,8 +105,7 @@ const ItemsForHireDetails = () => {
                 }}
               >
                 <img
-                  // The fix is here: Use item.image directly
-                  src={item.image}
+                  src={getImageUrl(item.image)}
                   alt={item.name}
                   loading="lazy"
                   style={{
@@ -182,6 +186,7 @@ const ItemsForHireDetails = () => {
         </div>
       </div>
 
+      {/* Modal popup */}
       {showPopup && (
         <div
           className="modal fade show"
@@ -205,8 +210,8 @@ const ItemsForHireDetails = () => {
                 <p>What would you like to do next?</p>
               </div>
               <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={handleContinueBrowse}>
-                  Continue Browse
+                <button className="btn btn-secondary" onClick={handleContinueBrowsing}>
+                  Continue Browsing
                 </button>
                 <button className="btn btn-primary" onClick={handleGoToCart}>
                   Go to Cart

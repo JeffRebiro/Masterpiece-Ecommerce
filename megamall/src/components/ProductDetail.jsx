@@ -5,8 +5,23 @@ import { CartContext } from "../components/CartContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-// The getImageUrl helper is no longer needed.
-// The backend now provides the full Cloudinary URL.
+const getImageUrl = (image) => {
+  if (!image) return "";
+
+  // If it's a full URL from the backend or CDN
+  if (image.startsWith("http://") || image.startsWith("https://")) return image;
+
+  // If served from Django /media/
+  if (image.startsWith("/media/")) return `${apiUrl}${image}`;
+
+  // Otherwise, treat as local image from assets
+  try {
+    return new URL(`../assets/images/${image}`, import.meta.url).href;
+  } catch (e) {
+    console.warn("Image not found:", image);
+    return "";
+  }
+};
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -74,8 +89,7 @@ const ProductDetail = () => {
                 borderRadius: "12px", border: "1px solid #ddd", backgroundColor: "#f9f9f9"
               }}>
                 <img
-                  // The fix is here: Use product.image directly
-                  src={product.image}
+                  src={getImageUrl(product.image)}
                   alt={product.name}
                   loading="lazy"
                   style={{
