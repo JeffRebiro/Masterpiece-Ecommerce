@@ -173,7 +173,7 @@ const Confirmation = () => {
                   >
                     <div className="col-md-7 d-flex">
                       <img
-                        src={item.image}
+                        src={item.product_image_url}
                         alt={item.name}
                         className="img-thumbnail mr-2"
                         style={{ width: '70px' }}

@@ -62,7 +62,7 @@ const CategoryPage = () => {
                         border: "1px solid #ddd"
                       }}>
                         <img
-                          src={item.image} // Replaced `getImageUrl(item.image)` with `item.image`
+                          src={item.image_url} // Use image_url
                           alt={item.name}
                           style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
                         />

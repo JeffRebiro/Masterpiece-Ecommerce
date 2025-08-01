@@ -52,7 +52,7 @@ const ItemsForHireDetails = () => {
         {
           id: item.id,
           name: item.name,
-          image: item.image,
+          image: item.image_url, // Use image_url
           hours,
           days,
           total,
@@ -99,7 +99,7 @@ const ItemsForHireDetails = () => {
                 }}
               >
                 <img
-                  src={item.image} // Replaced `items.image_url` with the correct `item.image`
+                  src={item.image_url} // Use image_url
                   alt={item.name}
                   loading="lazy"
                   style={{

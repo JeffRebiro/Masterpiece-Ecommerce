@@ -5,13 +5,15 @@ from .models import Product, Category, GuestUser, ShippingAddress, Order, OrderI
 from .models import HireItem
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='category.name', read_only=True)
+    image_url = serializers.SerializerMethodField()
+    category = serializers.CharField(source='category.name')
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image', 'description', 'category']
-        # The 'image' field is now directly included.
-        # The 'image_url' SerializerMethodField is no longer needed.
+        fields = ['id', 'name', 'price', 'image_url', 'description', 'category']
+
+    def get_image_url(self, obj):
+        return obj.image.url if obj.image else None
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -56,10 +58,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product = serializers.StringRelatedField()
+    
+    # You will need to add this to display the product image in the cart and checkout
+    product_image_url = serializers.ReadOnlyField(source='product.image.url')
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'quantity', 'price']
+        fields = ['id', 'product', 'product_image_url', 'quantity', 'price']
 
 class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(source='orderitem_set', many=True, read_only=True)
@@ -70,15 +75,15 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ['id', 'shipping_address', 'payment_method', 'total_price', 'status', 'created_at', 'order_items']
 
 class HireItemSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = HireItem
-        fields = ['id', 'name', 'image', 'details', 'hire_price_per_hour', 'hire_price_per_day']
-        # The 'image' field is now directly included.
-        # The 'image_url' SerializerMethodField is no longer needed.
+        fields = ['id', 'name', 'image_url', 'details', 'hire_price_per_hour', 'hire_price_per_day']
 
+    def get_image_url(self, obj):
+        return obj.image.url if obj.image else None
 
-from rest_framework import serializers
-from .models import CourierOrder
 
 class CourierOrderSerializer(serializers.ModelSerializer):
     parcel_action = serializers.ChoiceField(
@@ -97,7 +102,6 @@ class CourierOrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, data):
-        # Optionally map parcel_action to order_type internally (not saved in model)
         if 'parcel_action' in data:
             data['order_type'] = data['parcel_action']
         return data

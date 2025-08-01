@@ -66,7 +66,7 @@ const ItemsForHire = () => {
                     backgroundColor: "#f9f9f9"
                   }}>
                     <img
-                      src={item.image} // Replaced `items.image_url` with the correct `item.image`
+                      src={item.image_url} // Use image_url
                       alt={item.name}
                       crossOrigin="anonymous"
                       style={{
