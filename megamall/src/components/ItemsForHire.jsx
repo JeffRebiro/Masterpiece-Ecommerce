@@ -80,27 +80,6 @@ const ItemsForHire = () => {
             </div>
           ))}
         </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="row">
-            <div className="col-lg-12">
-              <ul className="pagination">
-                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                  <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(currentPage - 1); }}>Previous</a>
-                </li>
-                {[...Array(totalPages)].map((_, index) => (
-                  <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`} key={index}>
-                    <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(index + 1); }}>{index + 1}</a>
-                  </li>
-                ))}
-                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                  <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(currentPage + 1); }}>Next</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

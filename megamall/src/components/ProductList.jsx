@@ -110,51 +110,6 @@ const ProductList = () => {
             </div>
           ))}
         </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="d-flex justify-content-center mt-4">
-            <nav>
-              <ul className="pagination">
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  >
-                    Previous
-                  </button>
-                </li>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .slice(
-                    Math.max(currentPage - 2, 0),
-                    Math.min(currentPage + 2, totalPages)
-                  )
-                  .map((page) => (
-                    <li
-                      key={page}
-                      className={`page-item ${currentPage === page ? "active" : ""}`}
-                    >
-                      <button className="page-link" onClick={() => setCurrentPage(page)}>
-                        {page}
-                      </button>
-                    </li>
-                  ))}
-
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                  <button
-                    className="page-link"
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                  >
-                    Next
-                  </button>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        )}
       </div>
     </section>
   );
