@@ -1,134 +1,79 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useCart } from './CartContext';
 import { useAuth } from './AuthContext';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-
-// Use your correct base API URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://masterpiece-ecommerce.onrender.com/api";
+import { useNavigate } from 'react-router-dom';
 
 const Confirmation = () => {
-    // Cart-related state and context
-    const { cartItems, totalPrice, clearCart, setOrderConfirmed } = useCart();
-    const { user, shippingAddress, placeOrder, isLoggedIn, authToken } = useAuth();
+  const { cartItems, totalPrice, clearCart } = useCart();
+  const { user, shippingAddress, placeOrder } = useAuth();
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    // Single-item state
-    const [singleItem, setSingleItem] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    // Checkout form state
-    const [paymentMethod, setPaymentMethod] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+    if (!paymentMethod) {
+      setError('Please select a payment method.');
+      return;
+    }
 
-    // URL parameters to check for single-item confirmation
-    const { itemType, id } = useParams();
+    setLoading(true);
+    setError('');
 
-    useEffect(() => {
-        if (!isLoggedIn) {
-            navigate('/login');
-            return;
+    try {
+      const orderResponse = await placeOrder({
+        cartItems,
+        shippingAddress,
+        user,
+        totalPrice,
+        paymentMethod,
+      });
+
+      let orderId;
+      if (typeof orderResponse === 'string') {
+        orderId = orderResponse;
+      } else if (typeof orderResponse === 'object' && orderResponse !== null) {
+        if (orderResponse.id) {
+          orderId = orderResponse.id;
+        } else if (orderResponse.orderId) {
+          orderId = orderResponse.orderId;
+        } else {
+          throw new Error(
+            `Invalid order response: expected 'id' or 'orderId' key in response object, got: ${JSON.stringify(orderResponse)}`
+          );
         }
+      } else {
+        throw new Error(
+          `Invalid order response: expected a string or an object, got: ${JSON.stringify(orderResponse)}`
+        );
+      }
 
-        // This useEffect runs only for single-item confirmations
-        const fetchItem = async () => {
-            if (itemType && id) {
-                setIsLoading(true);
-                try {
-                    let endpoint = '';
-                    if (itemType === 'product') {
-                        endpoint = `${API_BASE_URL}/products/${id}/`;
-                    } else if (itemType === 'hire-item') {
-                        endpoint = `${API_BASE_URL}/hire-items/${id}/`;
-                    } else {
-                        console.error("Invalid item type");
-                        navigate('/');
-                        return;
-                    }
+      clearCart();
 
-                    const response = await axios.get(endpoint, {
-                        headers: {
-                            Authorization: `Token ${authToken}`,
-                        },
-                    });
-                    setSingleItem(response.data);
-                } catch (err) {
-                    console.error("Error fetching item:", err);
-                    navigate('/');
-                } finally {
-                    setIsLoading(false);
-                }
-            }
-        };
-
-        fetchItem();
-
-        // No need to clear cart for single-item confirmation
-        if (!itemType) {
-            setOrderConfirmed(true);
-        }
-
-    }, [isLoggedIn, itemType, id, authToken, navigate, setOrderConfirmed]);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!paymentMethod) {
-            setError('Please select a payment method.');
-            return;
-        }
-
-        setLoading(true);
-        setError('');
-
-        try {
-            const orderResponse = await placeOrder({
-                cartItems,
-                shippingAddress,
-                user,
-                totalPrice,
-                paymentMethod,
-            });
-
-            let orderId;
-            if (typeof orderResponse === 'string') {
-                orderId = orderResponse;
-            } else if (typeof orderResponse === 'object' && orderResponse !== null) {
-                if (orderResponse.id) {
-                    orderId = orderResponse.id;
-                } else if (orderResponse.orderId) {
-                    orderId = orderResponse.orderId;
-                } else {
-                    throw new Error(`Invalid order response: expected 'id' or 'orderId' key in response object, got: ${JSON.stringify(orderResponse)}`);
-                }
-            } else {
-                throw new Error(`Invalid order response: expected a string or an object, got: ${JSON.stringify(orderResponse)}`);
-            }
-
-            clearCart();
-            setOrderConfirmed(false); // Clear cart confirmation state
-
-            navigate('/payment-redirect', {
-                state: {
-                    paymentMethod,
-                    orderId,
-                    phoneNumber: shippingAddress?.phoneNumber || user?.phoneNumber || '',
-                },
-            });
-        } catch (err) {
-            console.error('Error placing order:', err);
-            setError(`Failed to place order: ${err.message || 'Unknown error'}`);
-        } finally {
-            setLoading(false);
-        }
-    };
+      navigate('/payment-redirect', {
+        state: {
+          paymentMethod,
+          orderId,
+          phoneNumber: shippingAddress?.phoneNumber || user?.phoneNumber || '',
+        },
+      });
+    } catch (err) {
+      console.error('Error placing order:', err);
+      setError(`Failed to place order: ${err.message || 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const renderDeliveryInfo = () => {
     if (!shippingAddress) return null;
 
     if (shippingAddress.deliveryOption === 'pickup') {
+      // It's a good practice to fetch store details from the backend
+      // instead of hardcoding them here.
       const storeMap = {
         '9': 'Afya Business Plaza (Near Globe Roundabout)',
         '10': 'Ghale House (Behind The Clarion Hotel)',
@@ -177,6 +122,7 @@ const Confirmation = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="row">
+          {/* Left Column */}
           <div className="col-lg-8">
             <div className="card checkout-preview-card mb-4">
               <div className="card-body">
@@ -228,15 +174,15 @@ const Confirmation = () => {
                     <div className="col-md-7 d-flex">
                       <img
                         src={item.product_image_url}
-                        alt={item.product}
+                        alt={item.name}
                         className="img-thumbnail mr-2"
                         style={{ width: '70px' }}
                       />
-                      <h5>{item.product}</h5>
+                      <h5>{item.name}</h5>
                     </div>
                     <div className="col-md-2 text-right">{item.quantity}</div>
                     <div className="col-md-3 text-right">
-                      KES {(item.price * item.quantity).toFixed(2)}
+                      KES {item.price * item.quantity}
                     </div>
                   </div>
                 ))}
@@ -263,6 +209,7 @@ const Confirmation = () => {
             </div>
           </div>
 
+          {/* Right Column */}
           <div className="col-lg-4">
             <div className="card checkout-preview-card mb-4">
               <div className="checkout-preview-card-actions">

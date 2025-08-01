@@ -22,6 +22,7 @@ import ItemsForHireDetails from "./components/ItemsForHireDetails";
 
 function App() {
   return (
+    // The Router component should wrap your context providers if they use routing hooks.
     <Router>
       <CartProvider>
         <AuthProvider>
@@ -35,17 +36,18 @@ function App() {
 function AppContent() {
   const location = useLocation();
 
+  // Optimized hideBanner logic using Array.prototype.some()
   const hideBanner = [
     '/',
     '/hire-items',
     '/cart',
     '/courier',
     '/search',
-    '/category',
+    '/category', // Use startswith for dynamic paths like /category/electronics
     '/login',
     '/checkout/shipping-address/',
     '/checkout/confirmation/',
-    '/order-success/',
+    '/order-success/', // Use startswith for dynamic paths like /order-success/some-uuid
     '/payment-redirect',
   ].some(path => location.pathname.startsWith(path));
 
@@ -65,7 +67,6 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/checkout/shipping-address/" element={<ShippingAddress />} />
           <Route path="/checkout/confirmation/" element={<Confirmation />} />
-          <Route path="/checkout/confirmation/:itemType/:id" element={<Confirmation />} />
           <Route path="/courier/" element={<Courier />} />
           <Route path="/payment-redirect" element={<PaymentRedirect />} />
           <Route path="/order-success/:orderId" element={<PaymentRedirect />} />
