@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${apiUrl}user-profile/`, {
+        const response = await fetch(`${apiUrl}/user-profile/`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
             "Content-Type": "application/json",
