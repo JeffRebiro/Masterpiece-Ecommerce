@@ -5,11 +5,18 @@ from .models import Product, Category, GuestUser, ShippingAddress, Order, OrderI
 from .models import HireItem
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='category.name')  # Return category name
+    category = serializers.CharField(source='category.name')
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image', 'description', 'category']
+        fields = ['id', 'name', 'price', 'image_url', 'description', 'category']
+
+    def get_image_url(self, obj):
+        if obj.image and hasattr(obj.image, 'url'):
+            return obj.image.url
+        return None
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,9 +74,17 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ['id', 'shipping_address', 'payment_method', 'total_price', 'status', 'created_at', 'order_items']
 
 class HireItemSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = HireItem
-        fields = '__all__'
+        fields = ['id', 'name', 'details', 'hire_price_per_hour', 'hire_price_per_day', 'image_url']
+
+    def get_image_url(self, obj):
+        if obj.image and hasattr(obj.image, 'url'):
+            return obj.image.url
+        return None
+
 
 from rest_framework import serializers
 from .models import CourierOrder
